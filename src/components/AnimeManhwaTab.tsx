@@ -266,7 +266,11 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           }`}
         >
           {item.isWatched ? <Eye className="w-3.5 h-3.5 text-[#386641]" /> : <EyeOff className="w-3.5 h-3.5" />}
-          <span>{item.isWatched ? 'Watched' : 'Mark Watched'}</span>
+          <span>
+            {item.category === 'Manhwa'
+              ? item.isWatched ? 'Read' : 'Mark Read'
+              : item.isWatched ? 'Watched' : 'Mark Watched'}
+          </span>
         </button>
 
         <div className="flex items-center gap-1">

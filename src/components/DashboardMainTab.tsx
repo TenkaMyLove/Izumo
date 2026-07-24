@@ -107,120 +107,77 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
     <div className="space-y-5">
       {/* BENTO GRID OVERVIEW CARDS */}
       <div className="grid grid-cols-1 md:grid-cols-6 gap-4">
-        {/* Bento Card 1: Main Metric Hero */}
-        <div className="md:col-span-3 bg-[#f1f5b1] text-[#121214] rounded-3xl p-6 shadow-lg flex flex-col justify-between relative overflow-hidden group border border-[#382c38]/15">
+        {/* Unified Bento Card: Today's Agenda (Merged Priority Up Next & Today's Overview) */}
+        <div className="md:col-span-4 bg-[#f1f5b1] text-[#121214] rounded-3xl p-6 shadow-md flex flex-col justify-between relative overflow-hidden group border border-[#382c38]/15">
           <div className="z-10">
-            <div className="flex items-center gap-2 mb-1">
-              <TrendingUp className="w-4 h-4 text-[#121214]/60" />
-              <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#121214]/60">Active Items</span>
-            </div>
-            <div className="text-6xl font-black mt-1 tracking-tight text-[#121214] leading-none">
-              {activeItems.length}
-            </div>
-            <p className="text-xs text-[#121214]/70 mt-2 font-semibold">
-              {completedItems.length} completed · {progressPct}% done
-            </p>
-            {/* Progress bar */}
-            <div className="mt-3 h-1.5 bg-[#121214]/10 rounded-full overflow-hidden">
-              <div
-                className="h-full bg-[#121214]/40 rounded-full transition-all duration-700"
-                style={{ width: `${progressPct}%` }}
-              />
-            </div>
-          </div>
-          <div className="z-10 mt-4 flex items-center gap-2 text-xs">
-            <span className="bg-[#121214] px-3 py-1 rounded-full text-[#faf1ec] font-bold text-[11px]">
-              📅 {todayStr}
-            </span>
-          </div>
-          {/* Decorative orb */}
-          <div className="absolute -bottom-8 -right-8 w-36 h-36 bg-[#efcc59]/25 rounded-full blur-2xl pointer-events-none transition-transform duration-700 group-hover:scale-150" />
-          <div className="absolute -top-4 -left-4 w-20 h-20 bg-[#f1f5b1]/60 rounded-full blur-xl pointer-events-none" />
-        </div>
-
-        {/* Bento Card 2: Overdue + Due Today */}
-        <div className="md:col-span-3 grid grid-cols-2 gap-4">
-          {/* Overdue */}
-          <div className={`bg-[#851f22]/8 border rounded-3xl p-5 flex flex-col justify-between transition-all duration-200 ${
-            overdueItems.length > 0 ? 'border-[#851f22]/50 shadow-sm shadow-[#851f22]/10' : 'border-[#851f22]/25'
-          }`}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#851f22]">Overdue</span>
-              <AlertCircle className={`w-4 h-4 text-[#851f22] ${overdueItems.length > 0 ? 'animate-pulse' : 'opacity-50'}`} />
-            </div>
-            <div className="mt-3">
-              <div className={`text-4xl font-black ${overdueItems.length > 0 ? 'text-[#851f22]' : 'text-[#851f22]/40'}`}>
-                {overdueItems.length}
-              </div>
-              <span className="text-[11px] text-[#851f22]/70 font-semibold mt-0.5 block">
-                {overdueItems.length > 0 ? 'Needs attention' : 'All caught up!'}
-              </span>
-            </div>
-          </div>
-
-          {/* Due Today */}
-          <div className={`bg-[#efcc59]/15 border rounded-3xl p-5 flex flex-col justify-between transition-all duration-200 ${
-            dueTodayItems.length > 0 ? 'border-[#efcc59]/60 shadow-sm shadow-[#efcc59]/10' : 'border-[#efcc59]/25'
-          }`}>
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#121214]">Due Today</span>
-              <Clock className={`w-4 h-4 text-[#121214] ${dueTodayItems.length > 0 ? '' : 'opacity-40'}`} />
-            </div>
-            <div className="mt-3">
-              <div className={`text-4xl font-black text-[#121214] ${dueTodayItems.length === 0 ? 'opacity-30' : ''}`}>
-                {dueTodayItems.length}
-              </div>
-              <span className="text-[11px] text-[#8f7c60] font-semibold mt-0.5 block">
-                {dueTodayItems.length > 0 ? 'Scheduled today' : 'Nothing due today'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* Bento Card 3: Up Next Priority */}
-        <div className="md:col-span-4 bg-white text-[#121214] rounded-3xl p-5 border border-[#382c38]/15 shadow-sm flex flex-col justify-between relative overflow-hidden group hover:shadow-md transition-shadow duration-200">
-          <div className="z-10">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#8f7c60] flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5 text-[#efcc59]" />
-                Priority Up Next
-              </span>
-              {upNextItem && (
-                <span className="text-[10px] bg-[#efcc59]/20 text-[#121214] px-2.5 py-0.5 rounded-full font-mono font-bold border border-[#efcc59]/40">
-                  {upNextItem.dueDate}
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#121214]/70" />
+                <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#121214]/70">
+                  Today's Agenda & Priority Up Next
                 </span>
-              )}
+              </div>
+              <span className="bg-[#121214] px-3 py-1 rounded-full text-[#faf1ec] font-bold text-[11px]">
+                📅 {todayStr}
+              </span>
             </div>
+
             {upNextItem ? (
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <h4 className="text-base font-bold text-[#121214] line-clamp-1">{upNextItem.title}</h4>
+              <div className="space-y-1.5 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-[#382c38]/10 shadow-xs">
+                <div className="flex items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#121214] text-[#faf1ec] uppercase tracking-wide">
+                      {upNextItem.category}
+                    </span>
+                    <h4 className="text-base font-black text-[#121214] line-clamp-1">{upNextItem.title}</h4>
+                  </div>
                   {upNextItem.recurrence && upNextItem.recurrence !== 'none' && (
-                    <span className="text-[10px] bg-[#f1f5b1] text-[#121214] px-2 py-0.5 rounded-full border border-[#382c38]/20 flex items-center gap-1 font-mono font-bold shrink-0">
+                    <span className="text-[10px] bg-[#efcc59]/30 text-[#121214] px-2 py-0.5 rounded-md border border-[#efcc59]/50 flex items-center gap-1 font-mono font-bold shrink-0">
                       <Repeat className="w-3 h-3" /> {upNextItem.recurrence}
                     </span>
                   )}
                 </div>
                 <p className="text-xs text-[#8f7c60] line-clamp-1 font-medium">
-                  {upNextItem.notes || `${upNextItem.category} · ${formatFriendlyDate(upNextItem.dueDate, todayStr)}`}
+                  {upNextItem.notes || `${formatFriendlyDate(upNextItem.dueDate, todayStr)} · Priority Item`}
                 </p>
               </div>
             ) : (
-              <p className="text-sm text-[#386641] font-bold mt-2">🎉 All items complete! Great work.</p>
+              <div className="bg-white/70 p-4 rounded-2xl border border-[#382c38]/10 text-center">
+                <p className="text-sm text-[#386641] font-bold">🎉 All caught up! No active items due.</p>
+              </div>
             )}
+
+            <div className="grid grid-cols-3 gap-3 mt-4">
+              <div className="bg-white/50 p-2.5 rounded-xl border border-[#382c38]/10 text-center">
+                <span className="text-[10px] uppercase font-bold text-[#8f7c60] block">Active</span>
+                <span className="text-xl font-black text-[#121214]">{activeItems.length}</span>
+              </div>
+              <div className="bg-white/50 p-2.5 rounded-xl border border-[#382c38]/10 text-center">
+                <span className="text-[10px] uppercase font-bold text-[#851f22] block">Overdue</span>
+                <span className="text-xl font-black text-[#851f22]">{overdueItems.length}</span>
+              </div>
+              <div className="bg-white/50 p-2.5 rounded-xl border border-[#382c38]/10 text-center">
+                <span className="text-[10px] uppercase font-bold text-[#121214] block">Due Today</span>
+                <span className="text-xl font-black text-[#121214]">{dueTodayItems.length}</span>
+              </div>
+            </div>
           </div>
-          <div className="z-10 mt-4 flex items-center justify-between text-xs border-t border-[#382c38]/10 pt-3">
-            <span className="text-[#8f7c60] text-[11px] font-medium">Auto-sorted by due date</span>
+
+          <div className="z-10 mt-3 flex items-center justify-between text-xs pt-2 border-t border-[#121214]/10">
+            <span className="text-[#121214]/70 text-[11px] font-semibold">
+              {completedItems.length} completed · {progressPct}% done
+            </span>
             {upNextItem?.link && (
               <button
                 onClick={() => onOpenLink(upNextItem.link!, upNextItem.title)}
-                className="text-[#121214] hover:text-[#8f7c60] text-xs font-bold flex items-center gap-1 transition-colors duration-150"
+                className="text-[#121214] hover:text-[#382c38] text-xs font-bold flex items-center gap-1 transition-colors duration-150"
               >
                 Open Link <ExternalLink className="w-3 h-3" />
               </button>
             )}
           </div>
-          <div className="absolute -bottom-6 -right-6 w-28 h-28 bg-[#f1f5b1]/30 rounded-full blur-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+          {/* Decorative orb */}
+          <div className="absolute -bottom-8 -right-8 w-36 h-36 bg-[#efcc59]/30 rounded-full blur-2xl pointer-events-none transition-transform duration-700 group-hover:scale-150" />
         </div>
 
         {/* Bento Card 4: Quick Add */}
@@ -361,7 +318,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                         </span>
                       )}
 
-                      {/* Watched Badge */}
+                      {/* Watched / Read Badge */}
                       {isAnimeOrManhwa && (
                         <span
                           className={`text-[10px] font-bold px-2 py-0.5 rounded-md border flex items-center gap-1 ${
@@ -371,7 +328,11 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                           }`}
                         >
                           {item.isWatched ? <Eye className="w-3 h-3 text-[#386641]" /> : <EyeOff className="w-3 h-3" />}
-                          <span>{item.isWatched ? 'Watched' : 'Unwatched'}</span>
+                          <span>
+                            {item.category === 'Manhwa'
+                              ? item.isWatched ? 'Read' : 'Unread'
+                              : item.isWatched ? 'Watched' : 'Unwatched'}
+                          </span>
                         </span>
                       )}
                     </div>
