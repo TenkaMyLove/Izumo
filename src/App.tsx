@@ -62,14 +62,14 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         setItems(data.items || []);
-        setSettings(data.settings || seed.settings);
+        setSettings(data.settings || getInitialSeedData().settings);
       }
     } catch (e) {
       console.warn('Backend API fetch error, operating in local memory mode:', e);
     } finally {
       setIsSyncing(false);
     }
-  }, [seed.settings]);
+  }, []);
 
   // Initial load & Polling for live sync between Desktop & Mobile
   useEffect(() => {
