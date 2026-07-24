@@ -6,7 +6,6 @@ import { AlertCircle, Clock, Calendar, CheckCircle2, ExternalLink, Edit3, CheckS
 interface StatusTabProps {
   items: AgendaItem[];
   simulatedDate?: string;
-  isDark?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -15,7 +14,6 @@ interface StatusTabProps {
 export const StatusTab: React.FC<StatusTabProps> = ({
   items,
   simulatedDate,
-  isDark = false,
   onToggleDone,
   onEditItem,
   onOpenLink,
@@ -49,7 +47,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       label: 'Overdue',
       count: overdueItems.length,
       icon: <AlertCircle className="w-6 h-6" />,
-      bg: isDark ? 'bg-[#851f22]/20' : 'bg-[#851f22]/10',
+      bg: 'bg-[#851f22]/10',
       border: overdueItems.length > 0 ? 'border-[#851f22]/50' : 'border-[#851f22]/20',
       text: 'text-[#851f22]',
       pulse: overdueItems.length > 0,
@@ -58,17 +56,17 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       label: 'Due Today',
       count: dueTodayItems.length,
       icon: <Clock className="w-6 h-6" />,
-      bg: isDark ? 'bg-[#efcc59]/20' : 'bg-[#efcc59]/15',
+      bg: 'bg-[#efcc59]/15',
       border: dueTodayItems.length > 0 ? 'border-[#efcc59]/60' : 'border-[#efcc59]/20',
-      text: isDark ? 'text-[#efcc59]' : 'text-[#121214]',
+      text: 'text-[#121214]',
       pulse: false,
     },
     {
       label: 'Upcoming',
       count: upcomingItems.length,
       icon: <Calendar className="w-6 h-6" />,
-      bg: isDark ? 'bg-[#1c1a1e]' : 'bg-white',
-      border: isDark ? 'border-[#382c38]' : 'border-[#382c38]/15',
+      bg: 'bg-white',
+      border: 'border-[#382c38]/15',
       text: 'text-[#386641]',
       pulse: false,
     },
@@ -76,9 +74,9 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       label: 'Completed',
       count: doneItems.length,
       icon: <CheckCircle2 className="w-6 h-6" />,
-      bg: isDark ? 'bg-[#18161a]' : 'bg-[#f8f5ef]',
-      border: isDark ? 'border-[#382c38]' : 'border-[#382c38]/15',
-      text: isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]',
+      bg: 'bg-[#f8f5ef]',
+      border: 'border-[#382c38]/15',
+      text: 'text-[#8f7c60]',
       pulse: false,
     },
   ];
@@ -114,14 +112,12 @@ export const StatusTab: React.FC<StatusTabProps> = ({
 
       {/* Progress Summary Bar */}
       {items.length > 0 && (
-        <div className={`border rounded-2xl p-4 shadow-xs ${
-          isDark ? 'bg-[#1c1a1e] border-[#382c38]' : 'bg-white border-[#382c38]/15'
-        }`}>
+        <div className="bg-white border border-[#382c38]/15 rounded-2xl p-4 shadow-xs">
           <div className="flex items-center justify-between mb-2">
-            <span className={`text-[11px] font-bold ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>Overall Progress</span>
+            <span className="text-[11px] font-bold text-[#121214]">Overall Progress</span>
             <span className="text-[11px] font-bold font-mono text-[#8f7c60]">{completionPct}% complete</span>
           </div>
-          <div className={`h-2 rounded-full overflow-hidden border ${isDark ? 'bg-[#121214] border-[#382c38]' : 'bg-[#f8f5ef] border-[#382c38]/10'}`}>
+          <div className="h-2 bg-[#f8f5ef] rounded-full overflow-hidden border border-[#382c38]/10">
             <div
               className="h-full bg-gradient-to-r from-[#386641] to-[#386641]/70 rounded-full transition-all duration-700"
               style={{ width: `${completionPct}%` }}
@@ -154,13 +150,12 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Due Today"
         count={dueTodayItems.length}
-        colorClass={isDark ? 'text-[#efcc59]' : 'text-[#121214]'}
+        colorClass="text-[#121214]"
         borderAccent="border-l-[#efcc59]"
         bgAccent="bg-[#efcc59]/5"
-        icon={<Clock className={`w-4 h-4 ${isDark ? 'text-[#efcc59]' : 'text-[#121214]'}`} />}
+        icon={<Clock className="w-4 h-4 text-[#121214]" />}
         items={dueTodayItems}
         todayStr={todayStr}
-        isDark={isDark}
         onToggleDone={onToggleDone}
         onEditItem={onEditItem}
         onOpenLink={onOpenLink}
@@ -210,7 +205,6 @@ interface StatusSectionProps {
   icon: React.ReactNode;
   items: AgendaItem[];
   todayStr: string;
-  isDark?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -227,7 +221,6 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   icon,
   items,
   todayStr,
-  isDark = false,
   onToggleDone,
   onEditItem,
   onOpenLink,
@@ -260,9 +253,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
             return (
               <div
                 key={item.id}
-                className={`border p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition-all duration-150 hover:shadow-xs group ${
-                  isDark ? 'bg-[#1c1a1e] border-[#382c38] hover:border-[#382c38]/80 text-[#faf1ec]' : 'bg-white border-[#382c38]/12 hover:border-[#382c38]/30 text-[#121214]'
-                }`}
+                className="bg-white border border-[#382c38]/12 hover:border-[#382c38]/30 p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition-all duration-150 hover:shadow-xs group"
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <button
@@ -277,7 +268,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                   </button>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5">
-                      <span className={`font-bold truncate block ${item.isDone ? 'line-through text-[#8f7c60]' : isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>
+                      <span className={`font-bold truncate block ${item.isDone ? 'line-through text-[#8f7c60]' : 'text-[#121214]'}`}>
                         {item.title}
                       </span>
                       {item.recurrence && item.recurrence !== 'none' && (

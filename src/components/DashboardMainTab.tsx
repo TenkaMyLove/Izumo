@@ -22,7 +22,6 @@ import {
 interface DashboardMainTabProps {
   items: AgendaItem[];
   simulatedDate?: string;
-  isDark?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
@@ -34,7 +33,6 @@ interface DashboardMainTabProps {
 export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
   items,
   simulatedDate,
-  isDark = false,
   onToggleDone,
   onToggleWatched,
   onEditItem,
@@ -97,21 +95,13 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
     const status = getItemStatus(item, todayStr);
     switch (status) {
       case 'Done':
-        return isDark
-          ? 'bg-[#161418] border-[#382c38]/40 opacity-50 text-[#a095a0]'
-          : 'bg-[#f8f5ef] border-[#382c38]/15 opacity-60 text-[#121214]';
+        return 'bg-[#f8f5ef] border-[#382c38]/15 opacity-60';
       case 'Overdue':
-        return isDark
-          ? 'bg-[#851f22]/20 border-l-4 border-l-[#851f22] border-[#851f22]/40 text-[#faf1ec]'
-          : 'bg-[#851f22]/8 border-l-2 border-l-[#851f22] border-[#851f22]/30 text-[#121214]';
+        return 'bg-[#851f22]/8 border-l-2 border-l-[#851f22] border-[#851f22]/30';
       case 'Due Today':
-        return isDark
-          ? 'bg-[#efcc59]/15 border-l-4 border-l-[#efcc59] border-[#efcc59]/40 text-[#faf1ec]'
-          : 'bg-[#efcc59]/10 border-l-2 border-l-[#efcc59] border-[#efcc59]/40 text-[#121214]';
+        return 'bg-[#efcc59]/10 border-l-2 border-l-[#efcc59] border-[#efcc59]/40';
       default:
-        return isDark
-          ? 'bg-[#1c1a1e] border-[#382c38] hover:border-[#efcc59]/40 text-[#faf1ec]'
-          : 'bg-white border-[#382c38]/15 hover:border-[#382c38]/35 hover:shadow-sm text-[#121214]';
+        return 'bg-white border-[#382c38]/15 hover:border-[#382c38]/35 hover:shadow-sm';
     }
   };
 
@@ -137,15 +127,13 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
             </div>
 
             {upNextItem ? (
-              <div className={`space-y-1.5 p-4 rounded-2xl border shadow-xs backdrop-blur-sm ${
-                isDark ? 'bg-[#121214]/80 border-[#382c38] text-[#faf1ec]' : 'bg-white/70 border-[#382c38]/10 text-[#121214]'
-              }`}>
+              <div className="space-y-1.5 bg-white/70 backdrop-blur-sm p-4 rounded-2xl border border-[#382c38]/10 shadow-xs">
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <span className="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-[#121214] text-[#faf1ec] uppercase tracking-wide">
                       {upNextItem.category}
                     </span>
-                    <h4 className={`text-base font-black line-clamp-1 ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>{upNextItem.title}</h4>
+                    <h4 className="text-base font-black text-[#121214] line-clamp-1">{upNextItem.title}</h4>
                   </div>
                   {upNextItem.recurrence && upNextItem.recurrence !== 'none' && (
                     <span className="text-[10px] bg-[#efcc59]/30 text-[#121214] px-2 py-0.5 rounded-md border border-[#efcc59]/50 flex items-center gap-1 font-mono font-bold shrink-0">
@@ -153,12 +141,12 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                     </span>
                   )}
                 </div>
-                <p className={`text-xs line-clamp-1 font-medium ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>
+                <p className="text-xs text-[#8f7c60] line-clamp-1 font-medium">
                   {upNextItem.notes || `${formatFriendlyDate(upNextItem.dueDate, todayStr)} · Priority Item`}
                 </p>
               </div>
             ) : (
-              <div className={`p-4 rounded-2xl border text-center ${isDark ? 'bg-[#121214]/80 border-[#382c38]' : 'bg-white/70 border-[#382c38]/10'}`}>
+              <div className="bg-white/70 p-4 rounded-2xl border border-[#382c38]/10 text-center">
                 <p className="text-sm text-[#386641] font-bold">🎉 All caught up! No active items due.</p>
               </div>
             )}
@@ -194,9 +182,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className={`flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-3 rounded-2xl border shadow-xs ${
-        isDark ? 'bg-[#1c1a1e] border-[#382c38]' : 'bg-white border-[#382c38]/15'
-      }`}>
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#382c38]/15 shadow-xs">
         {/* Search Input */}
         <div className="relative flex-1 max-w-xs">
           <Search className="w-3.5 h-3.5 text-[#8f7c60] absolute left-3 top-1/2 -translate-y-1/2" />
@@ -205,11 +191,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search agenda items..."
-            className={`w-full border rounded-xl pl-9 pr-3 py-2 text-xs placeholder-[#8f7c60] focus:outline-none focus:ring-2 focus:ring-[#f1f5b1]/80 transition-all duration-200 ${
-              isDark
-                ? 'bg-[#121214] text-[#faf1ec] border-[#382c38]'
-                : 'bg-[#faf1ec] text-[#121214] border-[#382c38]/15'
-            }`}
+            className="w-full bg-[#faf1ec] border border-[#382c38]/15 rounded-xl pl-9 pr-3 py-2 text-xs text-[#121214] placeholder-[#8f7c60] focus:outline-none focus:ring-2 focus:ring-[#f1f5b1]/80 focus:border-[#382c38]/40 transition-all duration-200"
           />
         </div>
 
@@ -221,9 +203,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
               onClick={() => setSelectedCategory(cat)}
               className={`px-3 py-1.5 rounded-xl text-[11px] font-bold whitespace-nowrap transition-all duration-150 ${
                 selectedCategory === cat
-                  ? 'bg-[#efcc59] text-[#121214] shadow-sm'
-                  : isDark
-                  ? 'bg-[#121214] text-[#a095a0] hover:bg-[#252225] hover:text-[#faf1ec] border border-[#382c38]'
+                  ? 'bg-[#121214] text-[#faf1ec] shadow-sm'
                   : 'bg-[#f8f5ef] text-[#8f7c60] hover:bg-[#faf1ec] hover:text-[#121214] border border-[#382c38]/20'
               }`}
             >
@@ -244,12 +224,10 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
 
       {/* Main List View */}
       {sortedItems.length === 0 ? (
-        <div className={`text-center py-14 rounded-2xl border shadow-xs animate-fade-in-scale ${
-          isDark ? 'bg-[#1c1a1e] border-[#382c38]' : 'bg-white border-[#382c38]/15'
-        }`}>
+        <div className="text-center py-14 bg-white rounded-2xl border border-[#382c38]/15 shadow-xs animate-fade-in-scale">
           <Calendar className="w-10 h-10 text-[#beb5a0] mx-auto mb-3" />
-          <h3 className={`text-sm font-bold ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>No agenda items found</h3>
-          <p className={`text-xs mt-1 max-w-xs mx-auto font-medium ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>
+          <h3 className="text-sm font-bold text-[#121214]">No agenda items found</h3>
+          <p className="text-xs text-[#8f7c60] mt-1 max-w-xs mx-auto font-medium">
             {searchQuery || selectedCategory !== 'All'
               ? 'Try adjusting your search or category filter.'
               : 'Nothing due today — check the Upcoming tab for what\'s next!'}
@@ -295,11 +273,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                       {/* Title */}
                       <h4
                         className={`text-sm font-bold truncate ${
-                          item.isDone
-                            ? 'line-through text-[#8f7c60]'
-                            : isDark
-                            ? 'text-[#faf1ec]'
-                            : 'text-[#121214]'
+                          item.isDone ? 'line-through text-[#8f7c60]' : 'text-[#121214]'
                         }`}
                       >
                         {item.title}
@@ -351,9 +325,9 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                       )}
                     </div>
 
-                      {/* Notes */}
+                    {/* Notes */}
                     {item.notes && (
-                      <p className={`text-xs line-clamp-1 font-normal ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>{item.notes}</p>
+                      <p className="text-xs text-[#8f7c60] line-clamp-1 font-normal">{item.notes}</p>
                     )}
                   </div>
                 </div>
@@ -362,8 +336,8 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-[#382c38]/10">
                   {/* Due Date */}
                   <div className="text-left sm:text-right">
-                    <span className={`text-[11px] font-bold block ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>{friendlyDate}</span>
-                    <span className={`text-[10px] font-mono ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>{item.dueDate}</span>
+                    <span className="text-[11px] font-bold text-[#121214] block">{friendlyDate}</span>
+                    <span className="text-[10px] text-[#8f7c60] font-mono">{item.dueDate}</span>
                   </div>
 
                   {/* Actions */}

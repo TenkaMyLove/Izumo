@@ -368,7 +368,6 @@ export default function App() {
                   <DashboardMainTab
                     items={items}
                     simulatedDate={settings.simulatedCurrentDate}
-                    isDark={Boolean(settings.darkMode)}
                     onToggleDone={handleToggleDone}
                     onToggleWatched={handleToggleWatched}
                     onEditItem={(item) => {
@@ -388,7 +387,6 @@ export default function App() {
                   <AnimeManhwaTab
                     items={items}
                     simulatedDate={settings.simulatedCurrentDate}
-                    isDark={Boolean(settings.darkMode)}
                     onToggleWatched={handleToggleWatched}
                     onEditItem={(item) => {
                       setEditingItem(item);
@@ -402,7 +400,6 @@ export default function App() {
                   <UpcomingTab
                     items={items}
                     simulatedDate={settings.simulatedCurrentDate}
-                    isDark={Boolean(settings.darkMode)}
                     onToggleDone={handleToggleDone}
                     onToggleWatched={handleToggleWatched}
                     onEditItem={(item) => {
@@ -422,7 +419,6 @@ export default function App() {
                   <StatusTab
                     items={items}
                     simulatedDate={settings.simulatedCurrentDate}
-                    isDark={Boolean(settings.darkMode)}
                     onToggleDone={handleToggleDone}
                     onEditItem={(item) => {
                       setEditingItem(item);
@@ -495,7 +491,6 @@ export default function App() {
                 <DashboardMainTab
                   items={items}
                   simulatedDate={settings.simulatedCurrentDate}
-                  isDark={Boolean(settings.darkMode)}
                   onToggleDone={handleToggleDone}
                   onToggleWatched={handleToggleWatched}
                   onEditItem={(item) => {
@@ -515,7 +510,6 @@ export default function App() {
                 <AnimeManhwaTab
                   items={items}
                   simulatedDate={settings.simulatedCurrentDate}
-                  isDark={Boolean(settings.darkMode)}
                   onToggleWatched={handleToggleWatched}
                   onEditItem={(item) => {
                     setEditingItem(item);
@@ -529,7 +523,6 @@ export default function App() {
                 <UpcomingTab
                   items={items}
                   simulatedDate={settings.simulatedCurrentDate}
-                  isDark={Boolean(settings.darkMode)}
                   onToggleDone={handleToggleDone}
                   onToggleWatched={handleToggleWatched}
                   onEditItem={(item) => {
@@ -549,7 +542,6 @@ export default function App() {
                 <StatusTab
                   items={items}
                   simulatedDate={settings.simulatedCurrentDate}
-                  isDark={Boolean(settings.darkMode)}
                   onToggleDone={handleToggleDone}
                   onEditItem={(item) => {
                     setEditingItem(item);
