@@ -6,6 +6,7 @@ import { formatFriendlyDate, getItemStatus, getTodayDateString } from '../utils/
 interface AnimeManhwaTabProps {
   items: AgendaItem[];
   simulatedDate?: string;
+  isDark?: boolean;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -14,6 +15,7 @@ interface AnimeManhwaTabProps {
 export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
   items,
   simulatedDate,
+  isDark = false,
   onToggleWatched,
   onEditItem,
   onOpenLink,
@@ -40,19 +42,21 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
   return (
     <div className="space-y-5">
       {/* Header Banner */}
-      <div className="bg-white p-5 rounded-3xl border border-[#382c38]/15 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
+      <div className={`p-5 rounded-3xl border flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs ${
+        isDark ? 'bg-[#1c1a1e] border-[#382c38]' : 'bg-white border-[#382c38]/15'
+      }`}>
         <div className="flex-1">
           <div className="flex items-center gap-2.5">
             <div className="flex items-center gap-1">
-              <Film className="w-5 h-5 text-[#121214]" />
+              <Film className={`w-5 h-5 ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`} />
               <BookOpen className="w-5 h-5 text-[#efcc59]" />
             </div>
-            <h3 className="text-base font-bold text-[#121214]">Anime, Manhwa & Manga</h3>
-            <span className="text-[10px] font-bold bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40 px-2 py-0.5 rounded-full font-mono">
+            <h3 className={`text-base font-bold ${isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>Anime, Manhwa & Manga</h3>
+            <span className="text-[10px] font-bold bg-[#efcc59]/15 text-[#efcc59] border border-[#efcc59]/40 px-2 py-0.5 rounded-full font-mono">
               {watchedPct}% watched
             </span>
           </div>
-          <p className="text-xs text-[#8f7c60] mt-1.5 font-medium leading-relaxed">
+          <p className={`text-xs mt-1.5 font-medium leading-relaxed ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>
             <Sparkles className="w-3 h-3 text-[#efcc59] inline mr-1" />
             One-time insertion: marking watched auto-increments to the next episode/chapter!
           </p>
@@ -71,19 +75,25 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 bg-[#faf1ec] p-1 rounded-xl border border-[#382c38]/15">
+        <div className={`flex items-center gap-1.5 p-1 rounded-xl border ${
+          isDark ? 'bg-[#121214] border-[#382c38]' : 'bg-[#faf1ec] border-[#382c38]/15'
+        }`}>
           {filterOptions.map(({ value, label, count }) => (
             <button
               key={value}
               onClick={() => setFilterView(value)}
               className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition-all duration-150 flex items-center gap-1.5 ${
                 filterView === value
-                  ? 'bg-[#121214] text-[#faf1ec] shadow-sm'
+                  ? isDark
+                    ? 'bg-[#efcc59] text-[#121214] shadow-sm'
+                    : 'bg-[#121214] text-[#faf1ec] shadow-sm'
+                  : isDark
+                  ? 'text-[#a095a0] hover:text-[#faf1ec]'
                   : 'text-[#8f7c60] hover:text-[#121214]'
               }`}
             >
               {label}
-              <span className={`text-[10px] font-mono ${filterView === value ? 'text-[#f1f5b1]' : 'text-[#beb5a0]'}`}>
+              <span className={`text-[10px] font-mono ${filterView === value ? (isDark ? 'text-[#121214]' : 'text-[#f1f5b1]') : 'text-[#beb5a0]'}`}>
                 {count}
               </span>
             </button>
@@ -127,6 +137,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
                       key={item.id}
                       item={item}
                       todayStr={todayStr}
+                      isDark={isDark}
                       onToggleWatched={onToggleWatched}
                       onEditItem={onEditItem}
                       onOpenLink={onOpenLink}
@@ -164,6 +175,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
                       key={item.id}
                       item={item}
                       todayStr={todayStr}
+                      isDark={isDark}
                       onToggleWatched={onToggleWatched}
                       onEditItem={onEditItem}
                       onOpenLink={onOpenLink}
@@ -183,6 +195,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
 interface AnimeCardProps {
   item: AgendaItem;
   todayStr: string;
+  isDark?: boolean;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -192,6 +205,7 @@ interface AnimeCardProps {
 const AnimeCard: React.FC<AnimeCardProps> = ({
   item,
   todayStr,
+  isDark = false,
   onToggleWatched,
   onEditItem,
   onOpenLink,
@@ -204,14 +218,16 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   return (
     <div
-      className={`bg-white border rounded-2xl p-4 space-y-3 transition-all duration-200 flex flex-col justify-between group hover:shadow-md animate-slide-in-up ${
+      className={`border rounded-2xl p-4 space-y-3 transition-all duration-200 flex flex-col justify-between group hover:shadow-md animate-slide-in-up ${
+        isDark ? 'bg-[#1c1a1e] text-[#faf1ec]' : 'bg-white text-[#121214]'
+      } ${
         item.isWatched
-          ? 'border-[#382c38]/10 opacity-70'
+          ? isDark ? 'border-[#382c38]/40 opacity-60' : 'border-[#382c38]/10 opacity-70'
           : status === 'Overdue'
-          ? 'border-[#851f22]/40 hover:border-[#851f22]/60'
+          ? 'border-[#851f22]/60 hover:border-[#851f22]'
           : status === 'Due Today'
-          ? 'border-[#efcc59]/50 hover:border-[#efcc59]/70'
-          : 'border-[#382c38]/15 hover:border-[#382c38]/35'
+          ? 'border-[#efcc59]/60 hover:border-[#efcc59]'
+          : isDark ? 'border-[#382c38] hover:border-[#382c38]/80' : 'border-[#382c38]/15 hover:border-[#382c38]/35'
       }`}
       style={{ animationDelay: `${animIdx * 30}ms` }}
     >
@@ -250,12 +266,12 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           </span>
         </div>
 
-        <h4 className={`text-sm font-bold leading-snug ${item.isWatched ? 'line-through text-[#8f7c60]' : 'text-[#121214]'}`}>
+        <h4 className={`text-sm font-bold leading-snug ${item.isWatched ? 'line-through text-[#8f7c60]' : isDark ? 'text-[#faf1ec]' : 'text-[#121214]'}`}>
           {item.title}
         </h4>
 
         {item.notes && (
-          <p className="text-xs text-[#8f7c60] line-clamp-2 leading-relaxed font-medium">{item.notes}</p>
+          <p className={`text-xs line-clamp-2 leading-relaxed font-medium ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>{item.notes}</p>
         )}
       </div>
 
