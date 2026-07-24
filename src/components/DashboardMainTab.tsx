@@ -44,12 +44,15 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Sanitize items array against null/undefined elements
+  const validItems = (items || []).filter((i): i is AgendaItem => Boolean(i && typeof i === 'object'));
+
   // Key metrics for top Bento Grid Overview
-  const activeItems = items.filter((i) => !i.isDone);
-  const completedItems = items.filter((i) => i.isDone);
-  const overdueItems = items.filter((i) => getItemStatus(i, todayStr) === 'Overdue');
-  const dueTodayItems = items.filter((i) => getItemStatus(i, todayStr) === 'Due Today');
-  const progressPct = items.length > 0 ? Math.round((completedItems.length / items.length) * 100) : 0;
+  const activeItems = validItems.filter((i) => !i.isDone);
+  const completedItems = validItems.filter((i) => i.isDone);
+  const overdueItems = validItems.filter((i) => getItemStatus(i, todayStr) === 'Overdue');
+  const dueTodayItems = validItems.filter((i) => getItemStatus(i, todayStr) === 'Due Today');
+  const progressPct = validItems.length > 0 ? Math.round((completedItems.length / validItems.length) * 100) : 0;
   
   // Find "Up Next" item
   const upNextItem = [...activeItems].sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];

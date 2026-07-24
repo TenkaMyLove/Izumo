@@ -1,12 +1,54 @@
 {
-  "items": [],
+  "items": [
+    {
+      "title": "Milf Hunting in another world Chapter 101",
+      "category": "Manhwa",
+      "dueDate": "2026-08-08",
+      "recurrence": "weekly",
+      "notes": "",
+      "link": "",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784900908727-qnym",
+      "createdAt": "2026-07-24T13:48:28.727Z",
+      "updatedAt": "2026-07-24T13:48:28.727Z"
+    },
+    {
+      "title": "Milf Hunting in another world Chapter 100",
+      "category": "Manhwa",
+      "dueDate": "2026-08-01",
+      "recurrence": "weekly",
+      "notes": "",
+      "link": "",
+      "isDone": true,
+      "isWatched": false,
+      "id": "item-1784900780845-o9lt",
+      "createdAt": "2026-07-24T13:46:20.845Z",
+      "updatedAt": "2026-07-24T13:48:28.717Z",
+      "doneAt": "2026-07-24T13:48:28.715Z"
+    },
+    {
+      "title": "Milf Hunting in another world Chapter 99",
+      "category": "Manhwa",
+      "dueDate": "2026-07-25",
+      "recurrence": "weekly",
+      "notes": "",
+      "link": "",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784900776757-zlfl",
+      "createdAt": "2026-07-24T13:46:16.757Z",
+      "updatedAt": "2026-07-24T13:46:43.970Z",
+      "doneAt": null
+    }
+  ],
   "settings": {
     "startupSoundEnabled": true,
-    "customSoundName": "Izumo Startup Sound Cue (Tenka.mp3)",
+    "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
     "syncCode": "AG-9842",
-    "lastSyncTime": "21.40",
+    "lastSyncTime": "21.48",
     "simulatedCurrentDate": "2026-07-25"
   },
-  "updatedAt": "2026-07-24T13:40:54.490Z"
+  "updatedAt": "2026-07-24T13:48:28.727Z"
 }

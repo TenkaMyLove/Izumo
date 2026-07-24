@@ -17,10 +17,9 @@ import { getInitialSeedData } from './utils/seedData';
 import { incrementEpisodeTitle, calculateNextDueDate } from './utils/recurringUtils';
 
 export default function App() {
-  // Initial fallback seed
-  const seed = getInitialSeedData();
-  const [items, setItems] = useState<AgendaItem[]>(seed.items);
-  const [settings, setSettings] = useState<AppSettings>(seed.settings);
+  // Initial state: start empty to avoid flashing stale seed data before server response
+  const [items, setItems] = useState<AgendaItem[]>([]);
+  const [settings, setSettings] = useState<AppSettings>(() => getInitialSeedData().settings);
   // Auto-detect viewMode: Default to 'mobile' on mobile devices, 'desktop' for actual desktop window app
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -313,10 +312,11 @@ export default function App() {
     }
   };
 
-  // Counts for badge notifications
+  // Counts for badge notifications (with defensive null checks)
   const todayStr = getTodayDateString(settings.simulatedCurrentDate);
-  const overdueCount = items.filter((i) => getItemStatus(i, todayStr) === 'Overdue').length;
-  const dueTodayCount = items.filter((i) => getItemStatus(i, todayStr) === 'Due Today').length;
+  const validItems = (items || []).filter((i): i is AgendaItem => Boolean(i && typeof i === 'object'));
+  const overdueCount = validItems.filter((i) => getItemStatus(i, todayStr) === 'Overdue').length;
+  const dueTodayCount = validItems.filter((i) => getItemStatus(i, todayStr) === 'Due Today').length;
 
   // Open Tray Context Menu
   const handleOpenTrayMenu = (e: React.MouseEvent) => {

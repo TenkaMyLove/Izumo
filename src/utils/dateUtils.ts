@@ -18,6 +18,9 @@ export function getTodayDateString(simulatedDateOverride?: string): string {
  * Computes the status of an item based on today's date
  */
 export function getItemStatus(item: AgendaItem, todayStr: string): ItemStatus {
+  if (!item || typeof item !== 'object') {
+    return 'Upcoming';
+  }
   if (item.isDone) {
     return 'Done';
   }
