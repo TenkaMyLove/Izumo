@@ -146,10 +146,10 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
 
       {/* Main List */}
       {sortedItems.length === 0 ? (
-        <div className="text-center py-14 bg-white rounded-2xl border border-[#382c38]/15 shadow-xs animate-fade-in-scale">
-          <Calendar className="w-10 h-10 text-[#beb5a0] mx-auto mb-3" />
-          <h3 className="text-sm font-bold text-[#121214]">No upcoming items</h3>
-          <p className="text-xs text-[#8f7c60] mt-1 max-w-xs mx-auto font-medium">
+        <div className="text-center py-14 bg-[#f1f5b1] text-[#121214] rounded-3xl border border-[#382c38]/20 p-6 shadow-md animate-fade-in-scale">
+          <Calendar className="w-10 h-10 text-[#382c38] mx-auto mb-3" />
+          <h3 className="text-sm font-black text-[#121214]">No upcoming items</h3>
+          <p className="text-xs text-[#382c38]/80 mt-1 max-w-xs mx-auto font-medium">
             {searchQuery || selectedCategory !== 'All'
               ? 'Try adjusting your search or category filter.'
               : 'All caught up! Add new items to start tracking.'}
@@ -157,7 +157,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
           {!searchQuery && selectedCategory === 'All' && (
             <button
               onClick={onAddNew}
-              className="mt-4 px-5 py-2 bg-[#f1f5b1] hover:bg-[#e6eba0] text-[#121214] font-bold text-xs rounded-2xl transition-all duration-150 hover:scale-105 border border-[#382c38]/20 shadow-sm"
+              className="mt-4 px-6 py-2.5 bg-[#121214] hover:bg-[#382c38] text-[#f1f5b1] font-bold text-xs rounded-2xl transition-all duration-150 hover:scale-105 border border-[#121214] shadow-sm"
             >
               + Add First Item
             </button>

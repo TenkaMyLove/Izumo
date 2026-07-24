@@ -92,10 +92,10 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
       </div>
 
       {animeManhwaItems.length === 0 ? (
-        <div className="text-center py-14 bg-white rounded-3xl border border-[#382c38]/15 p-6 shadow-xs animate-fade-in-scale">
-          <Film className="w-12 h-12 text-[#beb5a0] mx-auto mb-3" />
-          <h4 className="text-sm font-bold text-[#121214]">No Anime or Manhwa entries</h4>
-          <p className="text-xs text-[#8f7c60] mt-1 max-w-xs mx-auto font-medium">
+        <div className="text-center py-14 bg-[#f1f5b1] text-[#121214] rounded-3xl border border-[#382c38]/20 p-6 shadow-md animate-fade-in-scale">
+          <Film className="w-12 h-12 text-[#382c38] mx-auto mb-3" />
+          <h4 className="text-sm font-black text-[#121214]">No Anime or Manhwa entries</h4>
+          <p className="text-xs text-[#382c38]/80 mt-1 max-w-xs mx-auto font-medium">
             Add an item under Category "Anime", "Manhwa", or "Manga" to start tracking here!
           </p>
         </div>
@@ -117,7 +117,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
               </div>
 
               {unwatchedItems.length === 0 ? (
-                <p className="text-xs text-[#8f7c60] italic bg-white p-4 rounded-2xl border border-[#382c38]/15 font-medium">
+                <p className="text-xs text-[#382c38]/80 italic bg-[#f1f5b1] p-4 rounded-2xl border border-[#382c38]/20 font-medium shadow-xs">
                   ✨ All caught up! No unwatched anime or unread manhwa.
                 </p>
               ) : (
@@ -154,7 +154,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
               </div>
 
               {watchedItems.length === 0 ? (
-                <p className="text-xs text-[#8f7c60] italic bg-white p-4 rounded-2xl border border-[#382c38]/15 font-medium">
+                <p className="text-xs text-[#382c38]/80 italic bg-[#f1f5b1] p-4 rounded-2xl border border-[#382c38]/20 font-medium shadow-xs">
                   No items marked as watched yet.
                 </p>
               ) : (
@@ -204,14 +204,10 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
   return (
     <div
-      className={`bg-white border rounded-2xl p-4 space-y-3 transition-all duration-200 flex flex-col justify-between group hover:shadow-md animate-slide-in-up ${
+      className={`border rounded-2xl p-4 space-y-3 transition-all duration-200 flex flex-col justify-between group hover:shadow-md animate-slide-in-up ${
         item.isWatched
-          ? 'border-[#382c38]/10 opacity-70'
-          : status === 'Overdue'
-          ? 'border-[#851f22]/40 hover:border-[#851f22]/60'
-          : status === 'Due Today'
-          ? 'border-[#efcc59]/50 hover:border-[#efcc59]/70'
-          : 'border-[#382c38]/15 hover:border-[#382c38]/35'
+          ? 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]'
+          : 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] hover:bg-[#e6eba0] shadow-sm'
       }`}
       style={{ animationDelay: `${animIdx * 30}ms` }}
     >
@@ -250,12 +246,12 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           </span>
         </div>
 
-        <h4 className={`text-sm font-bold leading-snug ${item.isWatched ? 'line-through text-[#8f7c60]' : 'text-[#121214]'}`}>
+        <h4 className={`text-sm font-black leading-snug ${item.isWatched ? 'line-through text-[#8f7c60]' : 'text-[#121214]'}`}>
           {item.title}
         </h4>
 
         {item.notes && (
-          <p className="text-xs text-[#8f7c60] line-clamp-2 leading-relaxed font-medium">{item.notes}</p>
+          <p className="text-xs text-[#382c38]/80 line-clamp-2 leading-relaxed font-medium">{item.notes}</p>
         )}
       </div>
 
@@ -264,8 +260,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
           onClick={() => onToggleWatched(item.id, !!item.isWatched)}
           className={`flex-1 px-3 py-1.5 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all duration-150 hover:scale-[1.02] ${
             item.isWatched
-              ? 'bg-[#386641]/15 text-[#386641] border border-[#386641]/30 hover:bg-[#386641]/25'
-              : 'bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40 hover:bg-[#efcc59]/30'
+              ? 'bg-[#386641] text-white border border-[#386641]'
+              : 'bg-[#121214] text-[#faf1ec] border border-[#121214] hover:bg-[#382c38]'
           }`}
         >
           {item.isWatched ? <Eye className="w-3.5 h-3.5 text-[#386641]" /> : <EyeOff className="w-3.5 h-3.5" />}
@@ -288,7 +284,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 
           <button
             onClick={() => onEditItem(item)}
-            className="p-1.5 bg-[#f8f5ef] hover:bg-[#faf1ec] text-[#121214] rounded-lg border border-[#382c38]/25 transition-all duration-150 hover:scale-110"
+            className="p-1.5 bg-white/80 hover:bg-white text-[#121214] rounded-lg border border-[#382c38]/25 transition-all duration-150 hover:scale-110"
           >
             <Edit3 className="w-3.5 h-3.5" />
           </button>

@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "title": "dsad Ep 2",
+      "category": "Anime",
+      "dueDate": "2026-07-26",
+      "recurrence": "weekly",
+      "notes": "dsada",
+      "link": "",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784909449256-0t4g",
+      "createdAt": "2026-07-24T16:10:49.256Z",
+      "updatedAt": "2026-07-24T16:11:12.247Z"
+    },
+    {
       "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita Ep 3",
       "category": "Anime",
       "dueDate": "2026-07-26",
@@ -33,11 +46,12 @@
       "recurrence": "weekly",
       "notes": "“Anakku yang tak berguna! Seharusnya kau mendapatkan kelas ahli pedang, tapi aku tak pernah menyangka ini akan berakhir begitu tragis!”\n\nPada hari seorang anak genap berusia 15 tahun, ia menjalani Ritual Berkat Ilahi. Sebagai keturunan garis keturunan ahli pedang, Elymas seharusnya menggantikan ayahnya. Namun, ia justru mendapatkan kelas cacat, yaitu Kesatria Berat, dan tak hanya kehilangan statusnya sebagai calon kepala keluarga, tetapi juga diasingkan. Dengan statistik yang tidak seimbang dan keterampilan yang tampaknya tidak berguna, Kesatria Berat sering disebut sebagai kelas untuk para pengecut dan pemalas. Namun, Elymas tahu kebenarannya. Dunia tempat ia tinggal sama dengan dunia dalam game yang dulu ia mainkan… Justru Kesatria Berat-lah yang merupakan kelas terkuat di antara semuanya. Dengan memanfaatkan ingatan dari kehidupan sebelumnya, Elymas bertekad untuk menaklukkan seluruh dunia ini.",
       "link": "https://v2.samehadaku.how/anime/tsuihou-sareta-tensei-juukishi-wa-game/",
-      "isDone": false,
+      "isDone": true,
       "isWatched": true,
       "id": "item-1784904347537-ye71",
       "createdAt": "2026-07-24T14:45:47.538Z",
-      "updatedAt": "2026-07-24T14:58:35.376Z"
+      "updatedAt": "2026-07-24T16:06:32.466Z",
+      "doneAt": "2026-07-24T16:06:32.465Z"
     },
     {
       "title": "Milf Hunting in another world Chapter 101",
@@ -73,12 +87,12 @@
       "recurrence": "weekly",
       "notes": "",
       "link": "",
-      "isDone": false,
-      "isWatched": false,
+      "isDone": true,
+      "isWatched": true,
       "id": "item-1784900776757-zlfl",
       "createdAt": "2026-07-24T13:46:16.757Z",
-      "updatedAt": "2026-07-24T13:53:29.842Z",
-      "doneAt": null
+      "updatedAt": "2026-07-24T16:06:34.729Z",
+      "doneAt": "2026-07-24T16:06:34.729Z"
     }
   ],
   "settings": {
@@ -86,9 +100,9 @@
     "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
     "syncCode": "AG-9842",
-    "lastSyncTime": "23.36",
+    "lastSyncTime": "00.12",
     "simulatedCurrentDate": "2026-07-25",
     "darkMode": true
   },
-  "updatedAt": "2026-07-24T15:36:04.957Z"
+  "updatedAt": "2026-07-24T16:12:51.124Z"
 }
