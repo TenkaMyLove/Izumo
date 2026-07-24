@@ -110,26 +110,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({
         ))}
       </div>
 
-      {/* Progress Summary Bar */}
-      {items.length > 0 && (
-        <div className="bg-white border border-[#382c38]/15 rounded-2xl p-4 shadow-xs">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-[11px] font-bold text-[#121214]">Overall Progress</span>
-            <span className="text-[11px] font-bold font-mono text-[#8f7c60]">{completionPct}% complete</span>
-          </div>
-          <div className="h-2 bg-[#f8f5ef] rounded-full overflow-hidden border border-[#382c38]/10">
-            <div
-              className="h-full bg-gradient-to-r from-[#386641] to-[#386641]/70 rounded-full transition-all duration-700"
-              style={{ width: `${completionPct}%` }}
-            />
-          </div>
-          <div className="flex items-center justify-between mt-1.5">
-            <span className="text-[10px] text-[#851f22] font-medium">{overdueItems.length} overdue</span>
-            <span className="text-[10px] text-[#8f7c60] font-medium">{totalActive} active remaining</span>
-            <span className="text-[10px] text-[#386641] font-medium">{doneItems.length} done</span>
-          </div>
-        </div>
-      )}
+
 
       {/* Status Sections */}
       <StatusSection
@@ -253,17 +234,21 @@ const StatusSection: React.FC<StatusSectionProps> = ({
             return (
               <div
                 key={item.id}
-                className="bg-white border border-[#382c38]/12 hover:border-[#382c38]/30 p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition-all duration-150 hover:shadow-xs group"
+                className={`p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition-all duration-150 shadow-xs group ${
+                  item.isDone
+                    ? 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]'
+                    : 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] hover:bg-[#e6eba0]'
+                }`}
               >
                 <div className="flex items-center gap-2.5 min-w-0 flex-1">
                   <button
                     onClick={() => onToggleDone(item.id, item.isDone)}
-                    className="text-[#8f7c60] hover:text-[#121214] transition-transform duration-150 hover:scale-110 shrink-0"
+                    className="text-[#121214] hover:text-[#382c38] transition-transform duration-150 hover:scale-110 shrink-0"
                   >
                     {item.isDone ? (
                       <CheckSquare className="w-4 h-4 text-[#386641] fill-[#386641]/15" />
                     ) : (
-                      <Square className="w-4 h-4 text-[#8f7c60]" />
+                      <Square className="w-4 h-4 text-[#121214] hover:text-[#382c38]" />
                     )}
                   </button>
                   <div className="min-w-0 flex-1">
@@ -272,12 +257,12 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                         {item.title}
                       </span>
                       {item.recurrence && item.recurrence !== 'none' && (
-                        <span className="text-[9px] bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0" title="Recurring">
-                          <Repeat className="w-2.5 h-2.5" />
+                        <span className="text-[9px] bg-[#121214] text-[#faf1ec] border border-[#121214] px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0" title="Recurring">
+                          <Repeat className="w-2.5 h-2.5 text-[#f1f5b1]" />
                         </span>
                       )}
                     </div>
-                    <span className="text-[10px] text-[#8f7c60] font-medium">
+                    <span className="text-[10px] text-[#382c38]/80 font-semibold">
                       {item.category} · {friendlyDate}
                     </span>
                   </div>
@@ -287,14 +272,14 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                   {item.link && (
                     <button
                       onClick={() => onOpenLink(item.link!, item.title)}
-                      className="p-1.5 bg-[#efcc59]/15 text-[#121214] rounded-lg border border-[#efcc59]/40 hover:bg-[#efcc59]/30 transition-all duration-150 hover:scale-110"
+                      className="p-1.5 bg-[#121214] text-[#faf1ec] rounded-lg border border-[#121214] hover:bg-[#382c38] transition-all duration-150 hover:scale-110"
                     >
                       <ExternalLink className="w-3 h-3" />
                     </button>
                   )}
                   <button
                     onClick={() => onEditItem(item)}
-                    className="p-1.5 bg-[#f8f5ef] text-[#121214] rounded-lg border border-[#382c38]/25 hover:bg-[#faf1ec] transition-all duration-150 hover:scale-110"
+                    className="p-1.5 bg-white/80 text-[#121214] rounded-lg border border-[#382c38]/25 hover:bg-white transition-all duration-150 hover:scale-110"
                   >
                     <Edit3 className="w-3 h-3" />
                   </button>

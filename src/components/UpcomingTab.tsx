@@ -87,29 +87,29 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
   return (
     <div className="space-y-5">
       {/* Header Banner */}
-      <div className="bg-[#f8f5ef] border border-[#382c38]/15 rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-xs">
+      <div className="bg-[#f1f5b1] border border-[#382c38]/20 text-[#121214] rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
         <div className="flex-1">
           <div className="flex items-center gap-2.5 mb-1">
-            <div className="w-8 h-8 bg-[#f1f5b1] rounded-xl flex items-center justify-center border border-[#382c38]/15">
-              <ArrowRight className="w-4 h-4 text-[#121214]" />
+            <div className="w-8 h-8 bg-[#121214] rounded-xl flex items-center justify-center border border-[#121214]">
+              <ArrowRight className="w-4 h-4 text-[#f1f5b1]" />
             </div>
-            <h3 className="text-base font-bold text-[#faf1ec]">Upcoming</h3>
-            <span className="text-[10px] font-bold bg-[#121214] text-[#faf1ec] px-2 py-0.5 rounded-full font-mono">
+            <h3 className="text-base font-black text-[#121214]">Upcoming</h3>
+            <span className="text-[10px] font-extrabold bg-[#121214] text-[#faf1ec] px-2.5 py-0.5 rounded-full font-mono">
               {upcomingCount} ahead
             </span>
             {overdueCount > 0 && (
-              <span className="text-[10px] font-bold bg-[#851f22] text-[#faf1ec] px-2 py-0.5 rounded-full font-mono animate-pulse">
+              <span className="text-[10px] font-extrabold bg-[#851f22] text-[#faf1ec] px-2.5 py-0.5 rounded-full font-mono animate-pulse">
                 {overdueCount} overdue
               </span>
             )}
           </div>
-          <p className="text-xs text-[#8f7c60] font-medium">
+          <p className="text-xs text-[#382c38]/80 font-medium">
             Everything that's coming up — sorted by due date. Today's items are on the Dashboard.
           </p>
         </div>
         <button
           onClick={onAddNew}
-          className="px-4 py-2 rounded-xl bg-[#f1f5b1] hover:bg-[#e6eba0] text-[#121214] font-bold text-xs flex items-center gap-1.5 shadow-xs border border-[#382c38]/20 transition-all duration-150 hover:scale-105 shrink-0"
+          className="px-4 py-2.5 rounded-2xl bg-[#121214] hover:bg-[#382c38] text-[#faf1ec] font-bold text-xs flex items-center gap-1.5 shadow-sm border border-[#121214] transition-all duration-150 hover:scale-105 shrink-0"
         >
           + Add Item
         </button>
