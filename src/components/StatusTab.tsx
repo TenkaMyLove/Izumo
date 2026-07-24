@@ -47,36 +47,36 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       label: 'Overdue',
       count: overdueItems.length,
       icon: <AlertCircle className="w-6 h-6" />,
-      bg: 'bg-[#851f22]/10',
-      border: overdueItems.length > 0 ? 'border-[#851f22]/50' : 'border-[#851f22]/20',
-      text: 'text-[#851f22]',
+      bg: 'bg-[#851f22]/30',
+      border: overdueItems.length > 0 ? 'border-[#ff5555]' : 'border-[#851f22]/40',
+      text: 'text-[#ff6b6b]',
       pulse: overdueItems.length > 0,
     },
     {
       label: 'Due Today',
       count: dueTodayItems.length,
       icon: <Clock className="w-6 h-6" />,
-      bg: 'bg-[#efcc59]/15',
-      border: dueTodayItems.length > 0 ? 'border-[#efcc59]/60' : 'border-[#efcc59]/20',
-      text: 'text-[#121214]',
+      bg: 'bg-[#efcc59]/20',
+      border: dueTodayItems.length > 0 ? 'border-[#efcc59]' : 'border-[#efcc59]/30',
+      text: 'text-[#efcc59]',
       pulse: false,
     },
     {
       label: 'Upcoming',
       count: upcomingItems.length,
       icon: <Calendar className="w-6 h-6" />,
-      bg: 'bg-white',
-      border: 'border-[#382c38]/15',
-      text: 'text-[#386641]',
+      bg: 'bg-[#386641]/20',
+      border: 'border-[#386641]/50',
+      text: 'text-[#4ade80]',
       pulse: false,
     },
     {
       label: 'Completed',
       count: doneItems.length,
       icon: <CheckCircle2 className="w-6 h-6" />,
-      bg: 'bg-[#f8f5ef]',
-      border: 'border-[#382c38]/15',
-      text: 'text-[#8f7c60]',
+      bg: 'bg-white/10',
+      border: 'border-white/20',
+      text: 'text-[#beb5a0]',
       pulse: false,
     },
   ];
@@ -135,10 +135,10 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Overdue"
         count={overdueItems.length}
-        colorClass="text-[#851f22]"
-        borderAccent="border-l-[#851f22]"
-        bgAccent="bg-[#851f22]/5"
-        icon={<AlertCircle className="w-4 h-4 text-[#851f22]" />}
+        colorClass="text-[#ff6b6b]"
+        borderAccent="border-l-[#ff5555]"
+        bgAccent="bg-[#851f22]/20"
+        icon={<AlertCircle className="w-4 h-4 text-[#ff6b6b]" />}
         items={overdueItems}
         todayStr={todayStr}
         onToggleDone={onToggleDone}
@@ -150,10 +150,10 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Due Today"
         count={dueTodayItems.length}
-        colorClass="text-[#121214]"
+        colorClass="text-[#efcc59]"
         borderAccent="border-l-[#efcc59]"
-        bgAccent="bg-[#efcc59]/5"
-        icon={<Clock className="w-4 h-4 text-[#121214]" />}
+        bgAccent="bg-[#efcc59]/20"
+        icon={<Clock className="w-4 h-4 text-[#efcc59]" />}
         items={dueTodayItems}
         todayStr={todayStr}
         onToggleDone={onToggleDone}
@@ -236,7 +236,7 @@ const StatusSection: React.FC<StatusSectionProps> = ({
         <h4 className={`text-xs font-bold uppercase tracking-widest ${colorClass}`}>
           {title}
         </h4>
-        <span className="text-[10px] text-[#8f7c60] font-mono bg-[#f8f5ef] px-2 py-0.5 rounded-full border border-[#382c38]/15">
+        <span className="text-[10px] text-[#faf1ec] font-mono font-bold bg-[#121214] px-2 py-0.5 rounded-full border border-white/20">
           {count}
         </span>
         {subNote && (

@@ -93,7 +93,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
             <div className="w-8 h-8 bg-[#f1f5b1] rounded-xl flex items-center justify-center border border-[#382c38]/15">
               <ArrowRight className="w-4 h-4 text-[#121214]" />
             </div>
-            <h3 className="text-base font-bold text-[#121214]">Upcoming</h3>
+            <h3 className="text-base font-bold text-[#faf1ec]">Upcoming</h3>
             <span className="text-[10px] font-bold bg-[#121214] text-[#faf1ec] px-2 py-0.5 rounded-full font-mono">
               {upcomingCount} ahead
             </span>

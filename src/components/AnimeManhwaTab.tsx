@@ -108,10 +108,10 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
                 <div className="w-6 h-6 rounded-lg bg-[#efcc59]/20 border border-[#efcc59]/40 flex items-center justify-center">
                   <Play className="w-3 h-3 fill-[#efcc59] text-[#efcc59]" />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#121214]">
+                <h4 className="text-xs font-extrabold uppercase tracking-widest text-[#efcc59]">
                   Up Next / Not Watched
                 </h4>
-                <span className="text-[10px] text-[#8f7c60] font-mono bg-[#f8f5ef] px-2 py-0.5 rounded-full border border-[#382c38]/15">
+                <span className="text-[10px] text-[#faf1ec] font-mono font-bold bg-[#121214] px-2 py-0.5 rounded-full border border-[#efcc59]/40">
                   {unwatchedItems.length}
                 </span>
               </div>
@@ -145,10 +145,10 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
                 <div className="w-6 h-6 rounded-lg bg-[#386641]/15 border border-[#386641]/30 flex items-center justify-center">
                   <Check className="w-3 h-3 text-[#386641]" />
                 </div>
-                <h4 className="text-xs font-bold uppercase tracking-widest text-[#386641]">
+                <h4 className="text-xs font-extrabold uppercase tracking-widest text-[#386641]">
                   Watched / Read
                 </h4>
-                <span className="text-[10px] text-[#8f7c60] font-mono bg-[#f8f5ef] px-2 py-0.5 rounded-full border border-[#382c38]/15">
+                <span className="text-[10px] text-[#faf1ec] font-mono font-bold bg-[#121214] px-2 py-0.5 rounded-full border border-[#386641]/40">
                   {watchedItems.length}
                 </span>
               </div>
