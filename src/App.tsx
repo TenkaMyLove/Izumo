@@ -21,7 +21,23 @@ export default function App() {
   const seed = getInitialSeedData();
   const [items, setItems] = useState<AgendaItem[]>(seed.items);
   const [settings, setSettings] = useState<AppSettings>(seed.settings);
-  const [viewMode, setViewMode] = useState<ViewMode>('dual');
+  // Auto-detect screen size: Default to 'mobile' on mobile devices, 'dual' on desktop
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window !== 'undefined' && window.innerWidth < 768) {
+      return 'mobile';
+    }
+    return 'dual';
+  });
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768 && viewMode === 'dual') {
+        setViewMode('mobile');
+      }
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [viewMode]);
   const [activeTab, setActiveTab] = useState<ActiveTab>('all');
   const [isWindowVisible, setIsWindowVisible] = useState<boolean>(true);
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
