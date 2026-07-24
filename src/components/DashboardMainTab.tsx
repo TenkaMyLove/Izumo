@@ -95,13 +95,12 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
     const status = getItemStatus(item, todayStr);
     switch (status) {
       case 'Done':
-        return 'bg-[#f8f5ef] border-[#382c38]/15 opacity-60';
+        return 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]';
       case 'Overdue':
-        return 'bg-[#851f22]/8 border-l-2 border-l-[#851f22] border-[#851f22]/30';
+        return 'bg-[#851f22]/20 border-l-4 border-l-[#ff5555] border-[#851f22]/40 text-[#faf1ec]';
       case 'Due Today':
-        return 'bg-[#efcc59]/10 border-l-2 border-l-[#efcc59] border-[#efcc59]/40';
       default:
-        return 'bg-white border-[#382c38]/15 hover:border-[#382c38]/35 hover:shadow-sm';
+        return 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] shadow-sm hover:bg-[#e6eba0]';
     }
   };
 
@@ -258,13 +257,13 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                 <div className="flex items-start gap-3 min-w-0 flex-1">
                   <button
                     onClick={() => onToggleDone(item.id, item.isDone)}
-                    className="mt-0.5 text-[#8f7c60] hover:text-[#121214] transition-transform duration-150 hover:scale-110 shrink-0"
+                    className="mt-0.5 text-[#121214] hover:text-[#382c38] transition-transform duration-150 hover:scale-110 shrink-0"
                     title={item.isDone ? 'Mark Undone' : 'Mark Done'}
                   >
                     {item.isDone ? (
                       <CheckSquare className="w-5 h-5 text-[#386641] fill-[#386641]/20" />
                     ) : (
-                      <Square className="w-5 h-5 text-[#8f7c60] hover:text-[#121214]" />
+                      <Square className="w-5 h-5 text-[#121214] hover:text-[#382c38]" />
                     )}
                   </button>
 
@@ -327,7 +326,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
 
                     {/* Notes */}
                     {item.notes && (
-                      <p className="text-xs text-[#8f7c60] line-clamp-1 font-normal">{item.notes}</p>
+                      <p className="text-xs text-[#382c38]/80 line-clamp-1 font-medium">{item.notes}</p>
                     )}
                   </div>
                 </div>
@@ -337,7 +336,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                   {/* Due Date */}
                   <div className="text-left sm:text-right">
                     <span className="text-[11px] font-bold text-[#121214] block">{friendlyDate}</span>
-                    <span className="text-[10px] text-[#8f7c60] font-mono">{item.dueDate}</span>
+                    <span className="text-[10px] text-[#382c38]/70 font-mono font-semibold">{item.dueDate}</span>
                   </div>
 
                   {/* Actions */}
@@ -348,8 +347,8 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                         onClick={() => onToggleWatched(item.id, !!item.isWatched)}
                         className={`p-1.5 rounded-lg border transition-all duration-150 hover:scale-110 ${
                           item.isWatched
-                            ? 'bg-[#386641]/15 text-[#386641] border-[#386641]/30'
-                            : 'bg-[#f8f5ef] text-[#121214] border-[#382c38]/25 hover:bg-[#faf1ec]'
+                            ? 'bg-[#386641]/20 text-[#386641] border-[#386641]/40'
+                            : 'bg-white/80 text-[#121214] border-[#382c38]/25 hover:bg-white'
                         }`}
                         title={item.isWatched ? 'Mark Unwatched' : 'Mark Watched'}
                       >
@@ -361,7 +360,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                     {item.link && (
                       <button
                         onClick={() => onOpenLink(item.link!, item.title)}
-                        className="p-1.5 bg-[#efcc59]/15 hover:bg-[#efcc59]/35 text-[#121214] border border-[#efcc59]/40 rounded-lg transition-all duration-150 hover:scale-110"
+                        className="p-1.5 bg-[#121214] hover:bg-[#382c38] text-[#faf1ec] border border-[#121214] rounded-lg transition-all duration-150 hover:scale-110"
                         title="Open link"
                       >
                         <ExternalLink className="w-3.5 h-3.5" />
@@ -371,7 +370,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                     {/* Edit */}
                     <button
                       onClick={() => onEditItem(item)}
-                      className="p-1.5 bg-[#f8f5ef] hover:bg-[#faf1ec] text-[#121214] rounded-lg border border-[#382c38]/25 transition-all duration-150 hover:scale-110"
+                      className="p-1.5 bg-white/80 hover:bg-white text-[#121214] rounded-lg border border-[#382c38]/25 transition-all duration-150 hover:scale-110"
                       title="Edit Item"
                     >
                       <Edit3 className="w-3.5 h-3.5" />
@@ -380,7 +379,7 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                     {/* Delete */}
                     <button
                       onClick={() => onDeleteItem(item)}
-                      className="p-1.5 bg-[#851f22]/8 hover:bg-[#851f22] text-[#851f22] hover:text-[#faf1ec] rounded-lg border border-[#851f22]/25 transition-all duration-150 hover:scale-110"
+                      className="p-1.5 bg-[#851f22]/15 hover:bg-[#851f22] text-[#851f22] hover:text-[#faf1ec] rounded-lg border border-[#851f22]/30 transition-all duration-150 hover:scale-110"
                       title="Delete Item"
                     >
                       <Trash2 className="w-3.5 h-3.5" />

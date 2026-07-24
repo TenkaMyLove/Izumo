@@ -75,9 +75,9 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
   const getRowHighlightClass = (item: AgendaItem) => {
     const status = getItemStatus(item, todayStr);
     switch (status) {
-      case 'Done': return 'bg-[#f8f5ef] border-[#382c38]/15 opacity-60';
-      case 'Overdue': return 'bg-[#851f22]/8 border-l-2 border-l-[#851f22] border-[#851f22]/30';
-      default: return 'bg-white border-[#382c38]/15 hover:border-[#382c38]/35 hover:shadow-sm';
+      case 'Done': return 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]';
+      case 'Overdue': return 'bg-[#851f22]/20 border-l-4 border-l-[#ff5555] border-[#851f22]/40 text-[#faf1ec]';
+      default: return 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] shadow-sm hover:bg-[#e6eba0]';
     }
   };
 
@@ -230,7 +230,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
                       )}
                     </div>
                     {item.notes && (
-                      <p className="text-xs text-[#8f7c60] line-clamp-1 font-normal">{item.notes}</p>
+                      <p className="text-xs text-[#382c38]/80 line-clamp-1 font-medium">{item.notes}</p>
                     )}
                   </div>
                 </div>
@@ -239,7 +239,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
                 <div className="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end pt-2 sm:pt-0 border-t sm:border-t-0 border-[#382c38]/10">
                   <div className="text-left sm:text-right">
                     <span className="text-[11px] font-bold text-[#121214] block">{friendlyDate}</span>
-                    <span className="text-[10px] text-[#8f7c60] font-mono">{item.dueDate}</span>
+                    <span className="text-[10px] text-[#382c38]/70 font-mono font-semibold">{item.dueDate}</span>
                   </div>
                   <div className="flex items-center gap-1">
                     {isAnimeOrManhwa && (
