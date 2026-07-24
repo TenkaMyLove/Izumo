@@ -1,30 +1,75 @@
 # 🌸 Izumo — Anime & Task Companion
 
 <p align="center">
-  <img src="public/app-icon.png" width="120" height="120" alt="Izumo Icon" style="border-radius: 24px;" />
+  <img src="public/app-icon.png" width="120" height="120" alt="Izumo Icon" style="border-radius: 24px; box-shadow: 0 8px 16px rgba(0,0,0,0.3);" />
 </p>
 
 <p align="center">
-  <b>A sleek, aesthetic desktop & mobile agenda companion tailored for anime, manhwa, and daily tasks.</b>
+  <b>A sleek, high-contrast, aesthetic desktop & mobile agenda companion tailored for anime releases, manhwa/manga updates, and daily productivity.</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react" alt="React 19" />
+  <img src="https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-v4-06B6D4?style=flat-square&logo=tailwindcss" alt="Tailwind CSS v4" />
+  <img src="https://img.shields.io/badge/Electron-v43-47848F?style=flat-square&logo=electron" alt="Electron" />
+  <img src="https://img.shields.io/badge/Express-4.21-000000?style=flat-square&logo=express" alt="Express" />
 </p>
 
 ---
 
 ## ✨ Features
 
-- **🌸 Anime & Manhwa Tracker**: Track episode releases, chapter updates, watched status, and auto-increment next episode titles.
-- **📌 Priority Bento Dashboard**: Visual layout highlighting active, overdue, and today's priority items.
-- **🔊 Custom Audio Notifications**: Built-in Web Audio sound effects with volume gain control (`Tenka.mp3`).
-- **🖥️ Native Windows Desktop App**: Runs as a standalone Windows window using Electron with native Taskbar System Tray integration.
-- **📱 Responsive Mobile Experience**: Automatic edge-to-edge view on mobile screens.
-- **🔄 Live Device Sync**: Built-in sync state sharing across devices.
+- **🌸 Anime & Manhwa Tracker**: Specialized tracking for anime episode releases and manhwa/manga chapter updates, with quick progress incrementing and status workflow.
+- **📌 Priority Bento Dashboard**: Visual layout highlighting active, overdue, and today's priority items with vibrant high-contrast status cards.
+- **📆 Upcoming Schedule View**: Date-grouped breakdown (Today, Tomorrow, Later) for upcoming releases and scheduled tasks.
+- **📊 Status Workflow Board**: Kanban-style categorization across *Pending*, *In Progress*, *Done*, and *Paused/Archived*.
+- **⚡ Automated Day Rollover**: Automatic cleanup of completed items from previous days, with custom date simulation for testing recurring tasks.
+- **🔊 Custom Audio Cues**: Integrated Web Audio API sound engine with volume gain control and custom sound effects (`Tenka.mp3`).
+- **🖥️ Desktop & Mobile View Modes**: Supports full-width desktop mode as well as responsive mobile shell views.
+- **💻 Native Windows App**: Packaged with Electron and bundled with one-click background launchers (`Izumo.vbs`, `Izumo.bat`).
+- **💾 Persistent REST Backend**: Express server persisting agenda state in `data/agenda.json` with REST API endpoints for seamless device synchronization.
+
+---
+
+## 🛠️ Built With
+
+- **Frontend**: [React 19](https://react.dev/), [TypeScript](https://www.typescriptlang.org/), [Tailwind CSS v4](https://tailwindcss.com/), [Motion (Framer Motion)](https://motion.dev/), [Lucide Icons](https://lucide.dev/)
+- **Backend / Server**: [Express](https://expressjs.com/), [Vite](https://vitejs.dev/), [esbuild](https://esbuild.github.io/), [tsx](https://github.com/privatenumber/tsx)
+- **Desktop Environment**: [Electron](https://www.electronjs.org/), [Electron-Builder](https://www.electron.build/)
+
+---
+
+## 📂 Project Structure
+
+```text
+Izumo/
+├── api/                   # Serverless / API integration handlers
+├── data/                  # Persistent local data store (agenda.json)
+├── dist/                  # Built frontend and server bundle outputs
+├── public/                # Static assets & app icon
+├── release/               # Packaged Electron binaries & installers
+├── src/
+│   ├── components/        # React components (Dashboard, Anime/Manhwa, Shells, Modals)
+│   ├── utils/             # Sound utilities, date helpers, recurring task rules
+│   ├── App.tsx            # Main application logic & API state manager
+│   ├── index.css          # Tailwind CSS styles & animations
+│   └── types.ts           # Shared TypeScript interfaces & types
+├── main-electron.cjs      # Electron main process entry script
+├── server.ts              # Express API server & Vite development middleware
+├── Izumo.bat              # Batch launch script for Windows
+├── Izumo.vbs              # Silent VBScript launcher for background execution
+├── package.json           # Scripts, dependencies, and Electron-Builder configuration
+└── vite.config.ts         # Vite configuration
+```
 
 ---
 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
+
+- [Node.js](https://nodejs.org/) (v18 or higher recommended)
 - [npm](https://www.npmjs.com/)
 
 ### 🛠️ Installation & Setup
@@ -40,7 +85,7 @@
    npm install
    ```
 
-3. **Run in Development Mode:**
+3. **Start Development Server:**
    ```bash
    npm run dev
    ```
@@ -48,28 +93,50 @@
 
 ---
 
-## 🖥️ Running as a Native Desktop App
+## 📜 Available Scripts
 
-### Run Locally with Electron:
-```bash
-npm run build && npm run build:server && npm run electron:start
-```
-
-### Build Executable & Installer:
-```bash
-npm run build:exe
-```
-This generates the standalone executable at:
-- `release/win-unpacked/Izumo.exe` (Portable Desktop App)
-- `release/Izumo Setup 0.0.0.exe` (Windows Installer)
+| Command | Description |
+| :--- | :--- |
+| `npm run dev` | Starts the Express server with live Vite development middleware on port `3000`. |
+| `npm run lint` | Runs TypeScript type checking (`tsc --noEmit`). |
+| `npm run build` | Compiles the React frontend using Vite into `dist/`. |
+| `npm run build:server` | Bundles `server.ts` into CJS output `dist/server.cjs` using esbuild. |
+| `npm run start` | Runs the compiled production server (`node dist/server.cjs`). |
+| `npm run electron:start` | Builds the app and launches it inside a native Electron window. |
+| `npm run build:exe` | Builds the app and packages a standalone executable & installer via Electron-Builder. |
 
 ---
 
-## 🛠️ Built With
+## 🖥️ Running as a Native Windows App
 
-- **Frontend**: React, TypeScript, Tailwind CSS, Lucide Icons
-- **Backend / Server**: Express, Vite, esbuild
-- **Desktop Packaging**: Electron, Electron-Builder
+### Launching via Scripts:
+- **`Izumo.bat`**: Double-click to start the Express server and launch the app in your browser or desktop window.
+- **`Izumo.vbs`**: Runs `Izumo.bat` silently in the background without keeping a command prompt window visible.
+
+### Building Standalone Executables:
+```bash
+npm run build:exe
+```
+Output files will be generated in the `release/` directory:
+- `release/win-unpacked/Izumo.exe` (Portable Desktop App)
+- `release/Izumo Setup 0.0.0.exe` (Windows NSIS Installer)
+
+---
+
+## 🔌 API Endpoints
+
+The backend Express server provides RESTful endpoints for state management:
+
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Server health check and current timestamp. |
+| `GET` | `/api/data` | Fetches all agenda items and application settings. |
+| `POST` | `/api/items` | Creates a new agenda or tracking item. |
+| `PUT` | `/api/items/:id` | Updates an existing item by ID. |
+| `DELETE` | `/api/items/:id` | Deletes an item by ID. |
+| `POST` | `/api/settings` | Updates application settings (sound, theme, simulation date). |
+| `POST` | `/api/rollover` | Triggers day rollover processing to clear completed past items. |
+| `POST` | `/api/reset` | Resets all data back to initial seed data. |
 
 ---
 
