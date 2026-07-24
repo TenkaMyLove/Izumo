@@ -101,7 +101,9 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                   <div className="flex items-center gap-2 min-w-0">
                     <Sparkles className="w-4 h-4 text-[#efcc59] shrink-0" />
                     <span className="font-bold text-[#121214] truncate">
-                      {settings.customSoundName || 'Default Windows 11 Chime'}
+                      {settings.customSoundData
+                        ? settings.customSoundName || 'Custom Uploaded Sound'
+                        : 'Izumo Startup Sound Cue (Tenka.mp3)'}
                     </span>
                   </div>
 
@@ -130,7 +132,7 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
                     <button
                       onClick={() =>
                         onUpdateSettings({
-                          customSoundName: 'Default Windows 11 Chime',
+                          customSoundName: 'Izumo Startup Sound Cue (Tenka.mp3)',
                           customSoundData: undefined,
                         })
                       }

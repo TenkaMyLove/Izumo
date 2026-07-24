@@ -109,7 +109,7 @@ export function getInitialSeedData(): { items: AgendaItem[]; settings: AppSettin
 
   const initialSettings: AppSettings = {
     startupSoundEnabled: true,
-    customSoundName: 'Windows 11 Startup Chime',
+    customSoundName: 'Izumo Startup Sound Cue (Tenka.mp3)',
     autoStartWindows: true,
     syncCode: 'AG-9842',
     lastSyncTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
