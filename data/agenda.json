@@ -1,0 +1,87 @@
+{
+  "items": [
+    {
+      "title": "Chainsaw Man Season 2 - Episode 5",
+      "category": "Anime",
+      "dueDate": "2026-07-31",
+      "recurrence": "weekly",
+      "notes": "Airs on Crunchyroll at 21:00 JST. Peak climax episode!",
+      "link": "https://crunchyroll.com",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784891933722-8ieq",
+      "createdAt": "2026-07-24T11:18:53.722Z",
+      "updatedAt": "2026-07-24T11:18:53.722Z"
+    },
+    {
+      "id": "item-1",
+      "title": "Chainsaw Man Season 2 - Episode 4",
+      "category": "Anime",
+      "dueDate": "2026-07-24",
+      "notes": "Airs on Crunchyroll at 21:00 JST. Peak climax episode!",
+      "link": "https://crunchyroll.com",
+      "isDone": false,
+      "isWatched": false,
+      "recurrence": "weekly",
+      "createdAt": "2026-07-24T10:01:49.466Z",
+      "updatedAt": "2026-07-24T11:20:36.764Z"
+    },
+    {
+      "id": "item-2",
+      "title": "Solo Leveling Ragnarok - Chapter 42",
+      "category": "Manhwa",
+      "dueDate": "2026-07-24",
+      "notes": "New raw scan & scanlation release expected on Kakao/Asura.",
+      "link": "https://asuracomic.net",
+      "isDone": false,
+      "isWatched": true,
+      "recurrence": "weekly",
+      "createdAt": "2026-07-24T10:01:49.466Z",
+      "updatedAt": "2026-07-24T10:01:49.466Z"
+    },
+    {
+      "id": "item-4",
+      "title": "Omniscient Reader's Viewpoint - Chapter 218",
+      "category": "Manhwa",
+      "dueDate": "2026-07-27",
+      "notes": "Demon King selection arc continues.",
+      "link": "https://webtoons.com",
+      "isDone": false,
+      "isWatched": false,
+      "createdAt": "2026-07-24T10:01:49.466Z",
+      "updatedAt": "2026-07-24T10:01:49.466Z"
+    },
+    {
+      "id": "item-5",
+      "title": "Frieren Season 2 Announcement Stream",
+      "category": "Anime",
+      "dueDate": "2026-07-29",
+      "notes": "Special livestream event on YouTube.",
+      "link": "https://youtube.com",
+      "isDone": false,
+      "isWatched": false,
+      "createdAt": "2026-07-24T10:01:49.466Z",
+      "updatedAt": "2026-07-24T10:01:49.466Z"
+    },
+    {
+      "id": "item-7",
+      "title": "Prepare Midterm Exam Notes for Operating Systems",
+      "category": "Deadline",
+      "dueDate": "2026-07-29",
+      "notes": "Focus on Memory Management, Virtual Memory & Page Replacement.",
+      "link": "",
+      "isDone": false,
+      "createdAt": "2026-07-24T10:01:49.466Z",
+      "updatedAt": "2026-07-24T10:01:49.466Z"
+    }
+  ],
+  "settings": {
+    "startupSoundEnabled": true,
+    "customSoundName": "Windows 11 Startup Chime",
+    "autoStartWindows": true,
+    "syncCode": "AG-9842",
+    "lastSyncTime": "19.20",
+    "simulatedCurrentDate": "2026-07-25"
+  },
+  "updatedAt": "2026-07-24T11:20:36.765Z"
+}
