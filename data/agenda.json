@@ -1,6 +1,45 @@
 {
   "items": [
     {
+      "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita Ep 3",
+      "category": "Anime",
+      "dueDate": "2026-07-26",
+      "recurrence": "weekly",
+      "notes": "Penyihir Luck yakin ini sudah berakhir. Terkepung oleh iblis-iblis yang sangat kuat, ia rela berkorban dengan menahan serangan iblis sementara temannya melarikan diri. Tanpa tidur atau beristirahat, Luck bertahan menghadapi serangan pedang, hujan darah, dan gelombang musuh yang tak kunjung habis. Terlepas dari itu, ia berhasil mengalahkan komandan pasukan iblis dan keluar sebagai pemenang, hanya untuk menyadari 10 tahun telah berlalu. Selain itu, tubuhnya kembali ke usia yang jauh lebih muda hingga ia tampak seperti remaja.",
+      "link": "https://v2.samehadaku.how/anime/koko-wa-ore-ni-makasete-saki-ni-ike-to-itte-kara-10-nen-ga-tattara-densetsu-ni-natteita/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784905053602-e4f5",
+      "createdAt": "2026-07-24T14:57:33.602Z",
+      "updatedAt": "2026-07-24T14:58:08.134Z"
+    },
+    {
+      "title": "The Exiled Heavy Knight Knows How to Game the System Ep 5",
+      "category": "Anime",
+      "dueDate": "2026-08-01",
+      "recurrence": "weekly",
+      "notes": "“Anakku yang tak berguna! Seharusnya kau mendapatkan kelas ahli pedang, tapi aku tak pernah menyangka ini akan berakhir begitu tragis!”\n\nPada hari seorang anak genap berusia 15 tahun, ia menjalani Ritual Berkat Ilahi. Sebagai keturunan garis keturunan ahli pedang, Elymas seharusnya menggantikan ayahnya. Namun, ia justru mendapatkan kelas cacat, yaitu Kesatria Berat, dan tak hanya kehilangan statusnya sebagai calon kepala keluarga, tetapi juga diasingkan. Dengan statistik yang tidak seimbang dan keterampilan yang tampaknya tidak berguna, Kesatria Berat sering disebut sebagai kelas untuk para pengecut dan pemalas. Namun, Elymas tahu kebenarannya. Dunia tempat ia tinggal sama dengan dunia dalam game yang dulu ia mainkan… Justru Kesatria Berat-lah yang merupakan kelas terkuat di antara semuanya. Dengan memanfaatkan ingatan dari kehidupan sebelumnya, Elymas bertekad untuk menaklukkan seluruh dunia ini.",
+      "link": "https://v2.samehadaku.how/anime/tsuihou-sareta-tensei-juukishi-wa-game/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1784904966694-jir1",
+      "createdAt": "2026-07-24T14:56:06.694Z",
+      "updatedAt": "2026-07-24T14:56:06.694Z"
+    },
+    {
+      "title": "The Exiled Heavy Knight Knows How to Game the System Ep 4",
+      "category": "Anime",
+      "dueDate": "2026-07-25",
+      "recurrence": "weekly",
+      "notes": "“Anakku yang tak berguna! Seharusnya kau mendapatkan kelas ahli pedang, tapi aku tak pernah menyangka ini akan berakhir begitu tragis!”\n\nPada hari seorang anak genap berusia 15 tahun, ia menjalani Ritual Berkat Ilahi. Sebagai keturunan garis keturunan ahli pedang, Elymas seharusnya menggantikan ayahnya. Namun, ia justru mendapatkan kelas cacat, yaitu Kesatria Berat, dan tak hanya kehilangan statusnya sebagai calon kepala keluarga, tetapi juga diasingkan. Dengan statistik yang tidak seimbang dan keterampilan yang tampaknya tidak berguna, Kesatria Berat sering disebut sebagai kelas untuk para pengecut dan pemalas. Namun, Elymas tahu kebenarannya. Dunia tempat ia tinggal sama dengan dunia dalam game yang dulu ia mainkan… Justru Kesatria Berat-lah yang merupakan kelas terkuat di antara semuanya. Dengan memanfaatkan ingatan dari kehidupan sebelumnya, Elymas bertekad untuk menaklukkan seluruh dunia ini.",
+      "link": "https://v2.samehadaku.how/anime/tsuihou-sareta-tensei-juukishi-wa-game/",
+      "isDone": false,
+      "isWatched": true,
+      "id": "item-1784904347537-ye71",
+      "createdAt": "2026-07-24T14:45:47.538Z",
+      "updatedAt": "2026-07-24T14:58:35.376Z"
+    },
+    {
       "title": "Milf Hunting in another world Chapter 101",
       "category": "Manhwa",
       "dueDate": "2026-08-08",
@@ -20,12 +59,12 @@
       "recurrence": "weekly",
       "notes": "",
       "link": "",
-      "isDone": true,
+      "isDone": false,
       "isWatched": false,
       "id": "item-1784900780845-o9lt",
       "createdAt": "2026-07-24T13:46:20.845Z",
-      "updatedAt": "2026-07-24T13:48:28.717Z",
-      "doneAt": "2026-07-24T13:48:28.715Z"
+      "updatedAt": "2026-07-24T14:51:36.635Z",
+      "doneAt": null
     },
     {
       "title": "Milf Hunting in another world Chapter 99",
@@ -47,8 +86,8 @@
     "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
     "syncCode": "AG-9842",
-    "lastSyncTime": "21.53",
+    "lastSyncTime": "22.58",
     "simulatedCurrentDate": "2026-07-25"
   },
-  "updatedAt": "2026-07-24T13:53:29.858Z"
+  "updatedAt": "2026-07-24T14:58:35.376Z"
 }

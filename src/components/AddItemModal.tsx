@@ -17,6 +17,7 @@ type CategoryOption = { label: AgendaCategory; emoji: string; desc: string };
 const CATEGORIES: CategoryOption[] = [
   { label: 'Anime', emoji: '🎬', desc: 'Episodes & livestreams' },
   { label: 'Manhwa', emoji: '📖', desc: 'Chapters & webtoons' },
+  { label: 'Manga', emoji: '📚', desc: 'Japanese manga chapters' },
   { label: 'Deadline', emoji: '⏰', desc: 'Assignments & exams' },
   { label: 'Other', emoji: '📌', desc: 'Personal tasks & bills' },
 ];
@@ -64,7 +65,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
   const handleCategoryChange = (cat: AgendaCategory) => {
     setCategory(cat);
     if (!editingItem) {
-      if (cat === 'Anime' || cat === 'Manhwa') {
+      if (cat === 'Anime' || cat === 'Manhwa' || cat === 'Manga') {
         setRecurrence('weekly');
       } else {
         setRecurrence('none');
@@ -110,7 +111,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
     onClose();
   };
 
-  const isAnimeOrManhwa = category === 'Anime' || category === 'Manhwa';
+  const isAnimeOrManhwa = category === 'Anime' || category === 'Manhwa' || category === 'Manga';
 
   const recurrenceOptions: { value: RecurrenceType; label: string; desc: string }[] = [
     { value: 'none', label: 'One-time', desc: 'No auto-repeat' },
@@ -180,7 +181,7 @@ export const AddItemModal: React.FC<AddItemModalProps> = ({
             <label className="block text-[10px] font-extrabold uppercase text-[#8f7c60] mb-2 tracking-widest flex items-center gap-1">
               <Tag className="w-3 h-3" /> Category <span className="text-[#851f22]">*</span>
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {CATEGORIES.map((cat) => (
                 <button
                   key={cat.label}

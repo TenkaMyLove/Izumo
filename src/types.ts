@@ -1,4 +1,4 @@
-export type AgendaCategory = 'Anime' | 'Manhwa' | 'Deadline' | 'Other';
+export type AgendaCategory = 'Anime' | 'Manhwa' | 'Manga' | 'Deadline' | 'Other';
 
 export type ItemStatus = 'Overdue' | 'Due Today' | 'Upcoming' | 'Done';
 
@@ -29,4 +29,4 @@ export interface AppSettings {
 
 export type ViewMode = 'dual' | 'desktop' | 'mobile' | 'tray-only';
 
-export type ActiveTab = 'all' | 'anime-manhwa' | 'status' | 'settings';
+export type ActiveTab = 'all' | 'anime-manhwa' | 'upcoming' | 'status' | 'settings';

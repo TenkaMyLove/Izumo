@@ -6,6 +6,7 @@ import { MobilePhoneShell } from './components/MobilePhoneShell';
 import { TrayContextMenu } from './components/TrayContextMenu';
 import { DashboardMainTab } from './components/DashboardMainTab';
 import { AnimeManhwaTab } from './components/AnimeManhwaTab';
+import { UpcomingTab } from './components/UpcomingTab';
 import { StatusTab } from './components/StatusTab';
 import { AddItemModal } from './components/AddItemModal';
 import { SettingsModal } from './components/SettingsModal';
@@ -394,6 +395,25 @@ export default function App() {
                   />
                 )}
 
+                {activeTab === 'upcoming' && (
+                  <UpcomingTab
+                    items={items}
+                    simulatedDate={settings.simulatedCurrentDate}
+                    onToggleDone={handleToggleDone}
+                    onToggleWatched={handleToggleWatched}
+                    onEditItem={(item) => {
+                      setEditingItem(item);
+                      setIsAddModalOpen(true);
+                    }}
+                    onDeleteItem={(item) => setDeletingItem(item)}
+                    onOpenLink={(url, title) => setBrowserUrl({ url, title })}
+                    onAddNew={() => {
+                      setEditingItem(null);
+                      setIsAddModalOpen(true);
+                    }}
+                  />
+                )}
+
                 {activeTab === 'status' && (
                   <StatusTab
                     items={items}
@@ -507,6 +527,25 @@ export default function App() {
                     setIsAddModalOpen(true);
                   }}
                   onOpenLink={(url, title) => setBrowserUrl({ url, title })}
+                />
+              )}
+
+              {activeTab === 'upcoming' && (
+                <UpcomingTab
+                  items={items}
+                  simulatedDate={settings.simulatedCurrentDate}
+                  onToggleDone={handleToggleDone}
+                  onToggleWatched={handleToggleWatched}
+                  onEditItem={(item) => {
+                    setEditingItem(item);
+                    setIsAddModalOpen(true);
+                  }}
+                  onDeleteItem={(item) => setDeletingItem(item)}
+                  onOpenLink={(url, title) => setBrowserUrl({ url, title })}
+                  onAddNew={() => {
+                    setEditingItem(null);
+                    setIsAddModalOpen(true);
+                  }}
                 />
               )}
 

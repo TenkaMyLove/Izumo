@@ -13,7 +13,8 @@ import {
   Search, 
   ShieldCheck,
   ChevronUp,
-  Layout
+  Layout,
+  ArrowRight
 } from 'lucide-react';
 
 interface DesktopWindowShellProps {
@@ -49,7 +50,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
     {
       id: 'all' as ActiveTab,
       icon: <Calendar className="w-4 h-4" />,
-      label: 'All Items',
+      label: 'Dashboard',
       badge: items.length,
       badgeClass: 'bg-[#f1f5b1]/20 text-[#faf1ec]',
     },
@@ -57,15 +58,22 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
       id: 'anime-manhwa' as ActiveTab,
       icon: <Film className="w-4 h-4" />,
       label: 'Anime & Manhwa',
-      badge: items.filter((i) => i.category === 'Anime' || i.category === 'Manhwa').length,
+      badge: items.filter((i) => i.category === 'Anime' || i.category === 'Manhwa' || i.category === 'Manga').length,
       badgeClass: 'bg-[#efcc59]/20 text-[#efcc59]',
+    },
+    {
+      id: 'upcoming' as ActiveTab,
+      icon: <ArrowRight className="w-4 h-4" />,
+      label: 'Upcoming',
+      badge: overdueCount > 0 ? overdueCount : null,
+      badgeClass: 'bg-[#851f22] text-[#faf1ec] animate-pulse',
     },
     {
       id: 'status' as ActiveTab,
       icon: <BarChart3 className="w-4 h-4" />,
       label: 'Status Board',
-      badge: overdueCount > 0 ? overdueCount : null,
-      badgeClass: 'bg-[#851f22] text-[#faf1ec] animate-pulse',
+      badge: null,
+      badgeClass: '',
     },
   ];
 

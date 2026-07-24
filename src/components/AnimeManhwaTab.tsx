@@ -22,7 +22,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
   const [filterView, setFilterView] = useState<'all' | 'unwatched' | 'watched'>('all');
 
   const animeManhwaItems = items.filter(
-    (item) => item.category === 'Anime' || item.category === 'Manhwa'
+    (item) => item.category === 'Anime' || item.category === 'Manhwa' || item.category === 'Manga'
   );
 
   const unwatchedItems = animeManhwaItems.filter((item) => !item.isWatched);
@@ -47,7 +47,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
               <Film className="w-5 h-5 text-[#121214]" />
               <BookOpen className="w-5 h-5 text-[#efcc59]" />
             </div>
-            <h3 className="text-base font-bold text-[#121214]">Anime & Manhwa Tracker</h3>
+            <h3 className="text-base font-bold text-[#121214]">Anime, Manhwa & Manga</h3>
             <span className="text-[10px] font-bold bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40 px-2 py-0.5 rounded-full font-mono">
               {watchedPct}% watched
             </span>
@@ -96,7 +96,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
           <Film className="w-12 h-12 text-[#beb5a0] mx-auto mb-3" />
           <h4 className="text-sm font-bold text-[#121214]">No Anime or Manhwa entries</h4>
           <p className="text-xs text-[#8f7c60] mt-1 max-w-xs mx-auto font-medium">
-            Add an item under Category "Anime" or "Manhwa" to start tracking here!
+            Add an item under Category "Anime", "Manhwa", or "Manga" to start tracking here!
           </p>
         </div>
       ) : (
@@ -199,6 +199,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
 }) => {
   const friendlyDate = formatFriendlyDate(item.dueDate, todayStr);
   const isAnime = item.category === 'Anime';
+  const isManhwaOrManga = item.category === 'Manhwa' || item.category === 'Manga';
   const status = getItemStatus(item, todayStr);
 
   return (
@@ -221,6 +222,8 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
               className={`text-[10px] font-bold px-2 py-0.5 rounded-md border uppercase tracking-wide ${
                 isAnime
                   ? 'bg-[#121214] text-[#faf1ec] border-[#121214]'
+                  : item.category === 'Manga'
+                  ? 'bg-[#e07b54]/20 text-[#8b3a1a] border-[#e07b54]/50'
                   : 'bg-[#efcc59]/20 text-[#121214] border-[#efcc59]/50'
               }`}
             >
@@ -267,8 +270,7 @@ const AnimeCard: React.FC<AnimeCardProps> = ({
         >
           {item.isWatched ? <Eye className="w-3.5 h-3.5 text-[#386641]" /> : <EyeOff className="w-3.5 h-3.5" />}
           <span>
-            {item.category === 'Manhwa'
-              ? item.isWatched ? 'Read' : 'Mark Read'
+            {isManhwaOrManga ? item.isWatched ? 'Read' : 'Mark Read'
               : item.isWatched ? 'Watched' : 'Mark Watched'}
           </span>
         </button>
