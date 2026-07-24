@@ -1,0 +1,88 @@
+const { app, BrowserWindow, Tray, Menu } = require('electron');
+const path = require('path');
+
+// Start Express backend server in background
+require('./dist/server.cjs');
+
+let mainWindow = null;
+let tray = null;
+
+function createWindow() {
+  mainWindow = new BrowserWindow({
+    width: 1280,
+    height: 850,
+    title: 'Izumo Desktop',
+    icon: path.join(__dirname, 'public', 'app-icon.png'),
+    autoHideMenuBar: true,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
+  });
+
+  mainWindow.loadURL('http://localhost:3000');
+
+  mainWindow.on('close', (event) => {
+    if (!app.isQuitting) {
+      event.preventDefault();
+      mainWindow.hide();
+    }
+    return false;
+  });
+}
+
+function createTray() {
+  const iconPath = path.join(__dirname, 'public', 'app-icon.png');
+  try {
+    tray = new Tray(iconPath);
+  } catch (e) {
+    console.warn('Tray icon fallback:', e);
+  }
+
+  const contextMenu = Menu.buildFromTemplate([
+    {
+      label: 'Open Izumo',
+      click: () => {
+        mainWindow && mainWindow.show();
+        mainWindow && mainWindow.focus();
+      },
+    },
+    {
+      label: 'Hide to Tray',
+      click: () => {
+        mainWindow && mainWindow.hide();
+      },
+    },
+    { type: 'separator' },
+    {
+      label: 'Quit Izumo',
+      click: () => {
+        app.isQuitting = true;
+        app.quit();
+      },
+    },
+  ]);
+
+  if (tray) {
+    tray.setToolTip('Izumo Desktop');
+    tray.setContextMenu(contextMenu);
+
+    tray.on('click', () => {
+      if (mainWindow && mainWindow.isVisible()) {
+        mainWindow.hide();
+      } else if (mainWindow) {
+        mainWindow.show();
+        mainWindow.focus();
+      }
+    });
+  }
+}
+
+app.whenReady().then(() => {
+  createWindow();
+  createTray();
+});
+
+app.on('window-all-closed', () => {
+  // Keeps process alive in taskbar tray
+});

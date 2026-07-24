@@ -21,12 +21,12 @@ export default function App() {
   const seed = getInitialSeedData();
   const [items, setItems] = useState<AgendaItem[]>(seed.items);
   const [settings, setSettings] = useState<AppSettings>(seed.settings);
-  // Auto-detect screen size: Default to 'mobile' on mobile devices, 'dual' on desktop
+  // Auto-detect viewMode: Default to 'mobile' on mobile devices, 'desktop' for actual desktop window app
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
       return 'mobile';
     }
-    return 'dual';
+    return 'desktop';
   });
 
   useEffect(() => {
@@ -329,21 +329,23 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-[#0f0d0f] text-[#faf1ec] flex flex-col font-sans antialiased selection:bg-[#f1f5b1] selection:text-[#121214]">
-      {/* Top Controls & Mode Switcher Bar */}
-      <TopDeviceBar
-        viewMode={viewMode}
-        setViewMode={setViewMode}
-        settings={settings}
-        onPlaySound={() => playStartupSound(settings.customSoundData)}
-        onSimulateRollover={handleSimulateRollover}
-        onResetData={handleResetData}
-        isSyncing={isSyncing}
-        itemCount={items.length}
-        overdueCount={overdueCount}
-      />
+      {/* Top Controls Bar (hidden when running as pure desktop window or mobile) */}
+      {viewMode === 'dual' && (
+        <TopDeviceBar
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          settings={settings}
+          onPlaySound={() => playStartupSound(settings.customSoundData)}
+          onSimulateRollover={handleSimulateRollover}
+          onResetData={handleResetData}
+          isSyncing={isSyncing}
+          itemCount={items.length}
+          overdueCount={overdueCount}
+        />
+      )}
 
       {/* Main Workspace Stage */}
-      <main className="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full">
+      <main className={`flex-1 w-full ${viewMode === 'desktop' ? 'p-0 max-w-none' : 'p-4 md:p-8 max-w-7xl mx-auto'}`}>
         {/* View Mode 1: Dual View (Desktop & Mobile Side-by-Side) */}
         {viewMode === 'dual' && (
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -463,7 +465,7 @@ export default function App() {
 
         {/* View Mode 2: Desktop Only */}
         {viewMode === 'desktop' && (
-          <div className="max-w-5xl mx-auto">
+          <div className="w-full h-screen">
             <DesktopWindowShell
               items={items}
               settings={settings}
@@ -474,6 +476,7 @@ export default function App() {
               onOpenTrayMenu={handleOpenTrayMenu}
               overdueCount={overdueCount}
               dueTodayCount={dueTodayCount}
+              isNativeDesktop={true}
             >
               {activeTab === 'all' && (
                 <DashboardMainTab
@@ -546,7 +549,7 @@ export default function App() {
 
         {/* View Mode 3: Mobile Phone Only */}
         {viewMode === 'mobile' && (
-          <div className="flex flex-col items-center py-4">
+          <div className="flex flex-col items-center -m-4 sm:m-0">
             <MobilePhoneShell
               items={items}
               settings={settings}

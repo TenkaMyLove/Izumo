@@ -56,9 +56,9 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
   const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="w-full max-w-[380px] mx-auto bg-[#faf1ec] text-[#121214] rounded-[48px] p-3 shadow-2xl shadow-black/40 border-[3px] border-[#121214] ring-4 ring-[#382c38]/20 flex flex-col relative min-h-[740px] select-none">
-      {/* Dynamic Island */}
-      <div className="w-28 h-[18px] bg-[#121214] rounded-full mx-auto mb-2 flex items-center justify-center gap-2 z-20 border border-[#382c38]/30">
+    <div className="w-full max-w-md md:max-w-[380px] mx-auto bg-[#faf1ec] text-[#121214] sm:rounded-[44px] p-3 sm:shadow-2xl shadow-black/40 sm:border-[3px] border-[#121214] sm:ring-4 ring-[#382c38]/20 flex flex-col relative min-h-screen sm:min-h-[740px] select-none">
+      {/* Dynamic Island (hidden on real mobile screens) */}
+      <div className="hidden sm:flex w-28 h-[18px] bg-[#121214] rounded-full mx-auto mb-2 items-center justify-center gap-2 z-20 border border-[#382c38]/30">
         <span className="w-2.5 h-2.5 rounded-full bg-[#382c38]" />
         <span className={`w-2 h-2 rounded-full transition-colors duration-500 ${isSyncing ? 'bg-[#efcc59] animate-pulse' : 'bg-[#382c38]/60'}`} />
       </div>

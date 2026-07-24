@@ -1,7 +1,6 @@
 import express from 'express';
 import path from 'path';
 import fs from 'fs';
-import { createServer as createViteServer } from 'vite';
 import { AgendaItem, AppSettings } from './src/types';
 import { getInitialSeedData } from './src/utils/seedData';
 import { isDoneItemExpired, getTodayDateString } from './src/utils/dateUtils';
@@ -140,23 +139,38 @@ async function startServer() {
     res.json({ success: true, items: currentItems, settings: currentSettings });
   });
 
-  // Vite Integration
-  if (process.env.NODE_ENV !== 'production') {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: 'spa',
-    });
-    app.use(vite.middlewares);
-  } else {
-    const distPath = path.join(process.cwd(), 'dist');
+  // Serve static files from dist directory in production / compiled binary mode
+  const distPath = path.join(process.cwd(), 'dist');
+  if (fs.existsSync(distPath)) {
     app.use(express.static(distPath));
-    app.get('*', (req, res) => {
-      res.sendFile(path.join(distPath, 'index.html'));
+    app.get('*', (req, res, next) => {
+      if (req.path.startsWith('/api/')) return next();
+      const indexPath = path.join(distPath, 'index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        next();
+      }
     });
+  } else if (process.env.NODE_ENV !== 'production') {
+    try {
+      const { createServer: createViteServer } = await import('vite');
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: 'spa',
+      });
+      app.use(vite.middlewares);
+    } catch (e) {
+      console.warn('Vite dev server failed to load, running static fallback:', e);
+    }
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    const url = `http://localhost:${PORT}`;
+    console.log(`\n========================================`);
+    console.log(`  ✨ Izumo Server & Desktop Window Active!`);
+    console.log(`  🌐 URL: ${url}`);
+    console.log(`========================================\n`);
   });
 }
 

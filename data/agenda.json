@@ -1,6 +1,19 @@
 {
   "items": [
     {
+      "title": "Chained Soldier Ep 7",
+      "category": "Anime",
+      "dueDate": "2026-07-25",
+      "recurrence": "none",
+      "notes": "",
+      "link": "",
+      "isDone": false,
+      "isWatched": true,
+      "id": "item-1784898968142-ydo6",
+      "createdAt": "2026-07-24T13:16:08.143Z",
+      "updatedAt": "2026-07-24T13:16:13.255Z"
+    },
+    {
       "title": "Chainsaw Man Season 2 - Episode 5",
       "category": "Anime",
       "dueDate": "2026-07-31",
@@ -80,8 +93,8 @@
     "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
     "syncCode": "AG-9842",
-    "lastSyncTime": "19.20",
+    "lastSyncTime": "21.16",
     "simulatedCurrentDate": "2026-07-25"
   },
-  "updatedAt": "2026-07-24T11:20:36.765Z"
+  "updatedAt": "2026-07-24T13:16:13.255Z"
 }

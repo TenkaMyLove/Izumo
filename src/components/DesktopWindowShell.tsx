@@ -27,6 +27,7 @@ interface DesktopWindowShellProps {
   children: React.ReactNode;
   overdueCount: number;
   dueTodayCount: number;
+  isNativeDesktop?: boolean;
 }
 
 export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
@@ -40,6 +41,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
   children,
   overdueCount,
   dueTodayCount,
+  isNativeDesktop = false,
 }) => {
   const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
@@ -68,54 +70,58 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
   ];
 
   return (
-    <div className="w-full bg-[#faf1ec] text-[#121214] rounded-3xl overflow-hidden shadow-2xl shadow-black/30 border border-[#382c38]/60 flex flex-col relative min-h-[700px]">
-      {/* Windows App Window Header / Titlebar */}
-      <div className="bg-[#121214] border-b border-[#382c38]/60 px-5 py-3 flex items-center justify-between select-none">
-        {/* Subtle top gradient */}
-        <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#382c38] to-transparent" />
+    <div className={`w-full bg-[#faf1ec] text-[#121214] flex flex-col relative select-none ${
+      isNativeDesktop ? 'h-screen border-none rounded-none' : 'rounded-3xl overflow-hidden shadow-2xl shadow-black/30 border border-[#382c38]/60 min-h-[700px]'
+    }`}>
+      {/* Windows App Window Header / Titlebar (only shown in dual preview mode) */}
+      {!isNativeDesktop && (
+        <div className="bg-[#121214] border-b border-[#382c38]/60 px-5 py-3 flex items-center justify-between select-none">
+          {/* Subtle top gradient */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#382c38] to-transparent" />
 
-        {/* Left: Window Title & App Icon */}
-        <div className="flex items-center gap-3">
-          <div className="w-6 h-6 rounded-lg overflow-hidden border border-[#f1f5b1]/40 shadow-sm shrink-0">
-            <img src="/app-icon.jpg" alt="App Icon" className="w-full h-full object-cover" />
-          </div>
-          <span className="text-xs font-bold text-[#faf1ec] tracking-tight">
-            Izumo — Desktop
-          </span>
-          <span className="text-[10px] bg-[#efcc59]/15 text-[#efcc59] px-2 py-0.5 rounded-full font-mono font-bold border border-[#efcc59]/30">
-            Tray Active
-          </span>
-          {dueTodayCount > 0 && (
-            <span className="text-[10px] bg-[#f1f5b1]/15 text-[#f1f5b1] px-2 py-0.5 rounded-full font-bold border border-[#f1f5b1]/20">
-              {dueTodayCount} due today
+          {/* Left: Window Title & App Icon */}
+          <div className="flex items-center gap-3">
+            <div className="w-6 h-6 rounded-lg overflow-hidden border border-[#f1f5b1]/40 shadow-sm shrink-0">
+              <img src="/app-icon.jpg" alt="App Icon" className="w-full h-full object-cover" />
+            </div>
+            <span className="text-xs font-bold text-[#faf1ec] tracking-tight">
+              Izumo — Desktop
             </span>
-          )}
-        </div>
+            <span className="text-[10px] bg-[#efcc59]/15 text-[#efcc59] px-2 py-0.5 rounded-full font-mono font-bold border border-[#efcc59]/30">
+              Tray Active
+            </span>
+            {dueTodayCount > 0 && (
+              <span className="text-[10px] bg-[#f1f5b1]/15 text-[#f1f5b1] px-2 py-0.5 rounded-full font-bold border border-[#f1f5b1]/20">
+                {dueTodayCount} due today
+              </span>
+            )}
+          </div>
 
-        {/* Right: Window Controls */}
-        <div className="flex items-center gap-1">
-          <button
-            onClick={onHideWindow}
-            className="w-7 h-7 rounded-lg hover:bg-[#382c38] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 hover:scale-110"
-            title="Minimize to System Tray"
-          >
-            <Minus className="w-3.5 h-3.5" />
-          </button>
-          <button
-            className="w-7 h-7 rounded-lg hover:bg-[#382c38] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 opacity-40 cursor-not-allowed"
-            title="Maximize"
-          >
-            <SquareIcon className="w-3 h-3" />
-          </button>
-          <button
-            onClick={onHideWindow}
-            className="w-7 h-7 rounded-lg hover:bg-[#851f22] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 hover:scale-110"
-            title="Close window (Hides to System Tray per PRD 4.1)"
-          >
-            <X className="w-3.5 h-3.5" />
-          </button>
+          {/* Right: Window Controls */}
+          <div className="flex items-center gap-1">
+            <button
+              onClick={onHideWindow}
+              className="w-7 h-7 rounded-lg hover:bg-[#382c38] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 hover:scale-110"
+              title="Minimize to System Tray"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
+            <button
+              className="w-7 h-7 rounded-lg hover:bg-[#382c38] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 opacity-40 cursor-not-allowed"
+              title="Maximize"
+            >
+              <SquareIcon className="w-3 h-3" />
+            </button>
+            <button
+              onClick={onHideWindow}
+              className="w-7 h-7 rounded-lg hover:bg-[#851f22] text-[#8f7c60] hover:text-[#faf1ec] flex items-center justify-center transition-all duration-150 hover:scale-110"
+              title="Close window (Hides to System Tray per PRD 4.1)"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Main Window Frame Area */}
       {isWindowVisible ? (
@@ -200,7 +206,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
           </aside>
 
           {/* Windows Main Content Panel */}
-          <main className="flex-1 p-5 overflow-y-auto max-h-[620px] bg-[#faf1ec] animate-slide-in-up">
+          <main className="flex-1 p-5 overflow-y-auto bg-[#faf1ec] animate-slide-in-up">
             {children}
           </main>
         </div>
@@ -225,8 +231,9 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
         </div>
       )}
 
-      {/* Windows 11 Taskbar & System Tray Mockup */}
-      <footer className="bg-[#121214] border-t border-[#382c38]/60 px-4 py-2 flex items-center justify-between text-xs select-none z-10 text-[#faf1ec]">
+      {/* Windows 11 Taskbar & System Tray Mockup (only in dual preview mode) */}
+      {!isNativeDesktop && (
+        <footer className="bg-[#121214] border-t border-[#382c38]/60 px-4 py-2 flex items-center justify-between text-xs select-none z-10 text-[#faf1ec]">
         {/* Taskbar Left: Start & App Icons */}
         <div className="flex items-center gap-1.5">
           <button className="p-1.5 hover:bg-[#382c38] rounded-lg transition-all duration-150 hover:scale-110" title="Start">
@@ -288,6 +295,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
           </div>
         </div>
       </footer>
+      )}
     </div>
   );
 };
