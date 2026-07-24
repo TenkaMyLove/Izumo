@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { AppSettings } from '../types';
-import { Volume2, Monitor, RefreshCw, Upload, Check, Play, HardDrive, Smartphone, Sparkles, X } from 'lucide-react';
+import { Volume2, Monitor, RefreshCw, Upload, Check, Play, HardDrive, Smartphone, Sparkles, X, Moon, Sun } from 'lucide-react';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -68,6 +68,33 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
 
         {/* Content Body */}
         <div className="p-6 space-y-6 overflow-y-auto text-xs text-[#121214]">
+          {/* Section 0: Dark Mode Theme */}
+          <div className="space-y-3 bg-[#faf1ec] p-4 rounded-2xl border border-[#382c38]/20">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {settings.darkMode ? <Moon className="w-4 h-4 text-[#efcc59]" /> : <Sun className="w-4 h-4 text-[#121214]" />}
+                <h4 className="font-bold text-[#121214] text-sm">Dark Mode Theme</h4>
+              </div>
+              <button
+                onClick={() =>
+                  onUpdateSettings({ darkMode: !settings.darkMode })
+                }
+                className={`w-11 h-6 rounded-full transition-colors relative border border-[#382c38]/30 ${
+                  settings.darkMode ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
+                }`}
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 rounded-full bg-[#121214] transition-transform shadow-xs ${
+                    settings.darkMode ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+            <p className="text-[#8f7c60] leading-relaxed font-semibold">
+              Switch app background and panels to dark mode aesthetic.
+            </p>
+          </div>
+
           {/* Section 1: Startup Sound */}
           <div className="space-y-3 bg-[#faf1ec] p-4 rounded-2xl border border-[#382c38]/20">
             <div className="flex items-center justify-between">

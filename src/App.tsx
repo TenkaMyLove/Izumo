@@ -10,6 +10,7 @@ import { UpcomingTab } from './components/UpcomingTab';
 import { StatusTab } from './components/StatusTab';
 import { AddItemModal } from './components/AddItemModal';
 import { SettingsModal } from './components/SettingsModal';
+import { SettingsView } from './components/SettingsView';
 import { ConfirmDeleteModal } from './components/ConfirmDeleteModal';
 import { BrowserLinkModal } from './components/BrowserLinkModal';
 import { playStartupSound } from './utils/soundUtils';
@@ -428,24 +429,12 @@ export default function App() {
                 )}
 
                 {activeTab === 'settings' && (
-                  <div className="p-5 space-y-4">
-                    <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 bg-[#f1f5b1] rounded-xl flex items-center justify-center border border-[#382c38]/20">
-                        <span className="text-base">⚙️</span>
-                      </div>
-                      <div>
-                        <h3 className="text-sm font-black text-[#121214]">Settings & Sound</h3>
-                        <p className="text-[11px] text-[#8f7c60] font-medium">Manage sync, sounds, and preferences</p>
-                      </div>
-                    </div>
-                    <button
-                      onClick={() => setIsSettingsOpen(true)}
-                      className="w-full px-5 py-3 bg-[#f1f5b1] hover:bg-[#e6eba0] text-[#121214] font-bold rounded-2xl border border-[#382c38]/20 transition-all duration-150 hover:scale-[1.01] hover:shadow-md text-sm shadow-sm flex items-center justify-center gap-2"
-                    >
-                      <span>Open Full Settings</span>
-                      <span className="text-[#8f7c60]">→</span>
-                    </button>
-                  </div>
+                  <SettingsView
+                    settings={settings}
+                    onUpdateSettings={handleUpdateSettings}
+                    onTestSound={() => playStartupSound(settings.customSoundData)}
+                    onResetDemoData={handleResetData}
+                  />
                 )}
               </DesktopWindowShell>
             </div>
@@ -563,24 +552,12 @@ export default function App() {
               )}
 
               {activeTab === 'settings' && (
-                <div className="p-5 space-y-4">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 bg-[#f1f5b1] rounded-xl flex items-center justify-center border border-[#382c38]/20">
-                      <span className="text-base">⚙️</span>
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black text-[#121214]">Settings & Sound</h3>
-                      <p className="text-[11px] text-[#8f7c60] font-medium">Manage sync, sounds, and preferences</p>
-                    </div>
-                  </div>
-                  <button
-                    onClick={() => setIsSettingsOpen(true)}
-                    className="w-full px-5 py-3 bg-[#f1f5b1] hover:bg-[#e6eba0] text-[#121214] font-bold rounded-2xl border border-[#382c38]/20 transition-all duration-150 hover:scale-[1.01] hover:shadow-md text-sm shadow-sm flex items-center justify-center gap-2"
-                  >
-                    <span>Open Full Settings</span>
-                    <span className="text-[#8f7c60]">→</span>
-                  </button>
-                </div>
+                <SettingsView
+                  settings={settings}
+                  onUpdateSettings={handleUpdateSettings}
+                  onTestSound={() => playStartupSound(settings.customSoundData)}
+                  onResetDemoData={handleResetData}
+                />
               )}
             </DesktopWindowShell>
           </div>

@@ -25,6 +25,7 @@ export interface AppSettings {
   syncCode: string;
   lastSyncTime: string;
   simulatedCurrentDate?: string; // YYYY-MM-DD override for testing day rollover
+  darkMode?: boolean; // Toggle app theme between Light Mode (cream) and Dark Mode
 }
 
 export type ViewMode = 'dual' | 'desktop' | 'mobile' | 'tray-only';

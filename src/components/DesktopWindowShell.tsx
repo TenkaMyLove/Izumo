@@ -57,7 +57,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
     {
       id: 'anime-manhwa' as ActiveTab,
       icon: <Film className="w-4 h-4" />,
-      label: 'Anime & Manhwa',
+      label: 'Anime / Manhwa / Manga',
       badge: items.filter((i) => i.category === 'Anime' || i.category === 'Manhwa' || i.category === 'Manga').length,
       badgeClass: 'bg-[#efcc59]/20 text-[#efcc59]',
     },
@@ -77,8 +77,10 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
     },
   ];
 
+  const isDark = Boolean(settings.darkMode);
+
   return (
-    <div className={`w-full bg-[#faf1ec] text-[#121214] flex flex-col relative select-none ${
+    <div className={`w-full ${isDark ? 'bg-[#121214] text-[#faf1ec]' : 'bg-[#faf1ec] text-[#121214]'} flex flex-col relative select-none ${
       isNativeDesktop ? 'h-screen border-none rounded-none' : 'rounded-3xl overflow-hidden shadow-2xl shadow-black/30 border border-[#382c38]/60 min-h-[700px]'
     }`}>
       {/* Windows App Window Header / Titlebar (only shown in dual preview mode) */}
@@ -133,7 +135,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
 
       {/* Main Window Frame Area */}
       {isWindowVisible ? (
-        <div className="flex-1 flex flex-col md:flex-row overflow-hidden bg-[#faf1ec]">
+        <div className={`flex-1 flex flex-col md:flex-row overflow-hidden ${isDark ? 'bg-[#121214]' : 'bg-[#faf1ec]'}`}>
           {/* Windows App Navigation Sidebar */}
           <aside className="w-full md:w-56 bg-[#121214] border-r border-[#382c38]/60 p-3 space-y-1 shrink-0 flex flex-col">
             <div className="text-[10px] font-bold uppercase tracking-widest text-[#f1f5b1]/70 px-3 py-2 mt-1">
@@ -214,7 +216,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
           </aside>
 
           {/* Windows Main Content Panel */}
-          <main className="flex-1 p-5 overflow-y-auto bg-[#faf1ec] animate-slide-in-up">
+          <main className={`flex-1 p-5 overflow-y-auto ${isDark ? 'bg-[#121214]' : 'bg-[#faf1ec]'} animate-slide-in-up`}>
             {children}
           </main>
         </div>
