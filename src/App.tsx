@@ -69,9 +69,21 @@ export default function App() {
         );
         setItems(cleanItems);
         setSettings(data.settings || getInitialSeedData().settings);
+
+        // Auto-backup to localStorage in case Vercel is unreachable
+        try {
+          localStorage.setItem('izumo_auto_backup_items', JSON.stringify(cleanItems));
+          localStorage.setItem('izumo_auto_backup_settings', JSON.stringify(data.settings || {}));
+        } catch (e) {}
       }
     } catch (e) {
-      console.warn('Backend API fetch error, operating in local memory mode:', e);
+      console.warn('Backend API fetch error, restoring from local backup:', e);
+      try {
+        const cachedItems = localStorage.getItem('izumo_auto_backup_items');
+        const cachedSettings = localStorage.getItem('izumo_auto_backup_settings');
+        if (cachedItems) setItems(JSON.parse(cachedItems));
+        if (cachedSettings) setSettings(JSON.parse(cachedSettings));
+      } catch (err) {}
     } finally {
       setIsSyncing(false);
     }
