@@ -1,5 +1,6 @@
-import { app, BrowserWindow, Tray, Menu } from 'electron';
+import { app, BrowserWindow, Tray, Menu, ipcMain } from 'electron';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 import './dist/server.cjs'; // Starts express backend server silently
 
@@ -8,6 +9,20 @@ const __dirname = path.dirname(__filename);
 
 let mainWindow = null;
 let tray = null;
+
+// Handle writing automatic data backup to local disk e:\Izumo\data\agenda.json whenever synced from Vercel
+ipcMain.on('save-local-backup', (event, data) => {
+  try {
+    const dataDir = path.join(__dirname, 'data');
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    const filePath = path.join(dataDir, 'agenda.json');
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
+  } catch (e) {
+    console.warn('Failed to write backup to local disk agenda.json:', e);
+  }
+});
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -19,6 +34,7 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   });
 

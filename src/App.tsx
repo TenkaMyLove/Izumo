@@ -75,6 +75,11 @@ export default function App() {
           localStorage.setItem('izumo_auto_backup_items', JSON.stringify(cleanItems));
           localStorage.setItem('izumo_auto_backup_settings', JSON.stringify(data.settings || {}));
         } catch (e) {}
+
+        // If running in Electron desktop app, backup directly to local disk e:\Izumo\data\agenda.json
+        if (typeof window !== 'undefined' && (window as any).electronAPI?.saveLocalBackup) {
+          (window as any).electronAPI.saveLocalBackup(data);
+        }
       }
     } catch (e) {
       console.warn('Backend API fetch error, restoring from local backup:', e);

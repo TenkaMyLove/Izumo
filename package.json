@@ -50,6 +50,7 @@
       "dist/**/*",
       "public/**/*",
       "main-electron.cjs",
+      "preload.cjs",
       "package.json"
     ],
     "win": {
