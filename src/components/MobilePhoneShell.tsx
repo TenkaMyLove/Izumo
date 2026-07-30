@@ -150,7 +150,7 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
       </div>
 
       {/* Bottom Navigation Tab Bar */}
-      <nav className="mt-auto pt-1.5 bg-[#121214] border border-[#382c38]/60 rounded-2xl p-1.5 grid grid-cols-4 gap-0.5 text-[10px] font-bold text-[#8f7c60] shadow-lg sticky bottom-0 z-20">
+      <nav className="mt-auto pt-1.5 bg-[#121214] border border-[#382c38]/60 rounded-2xl p-1.5 grid grid-cols-4 gap-0.5 text-[10px] font-bold text-[#beb5a0] shadow-lg sticky bottom-0 z-20">
         {[
           { id: 'all' as ActiveTab, icon: <Calendar className="w-4 h-4" />, label: 'Agenda', badge: null },
           { id: 'anime-manhwa' as ActiveTab, icon: <Film className="w-4 h-4" />, label: 'Anime', badge: null },
@@ -202,111 +202,123 @@ const MobileMainList: React.FC<{
     return a.dueDate.localeCompare(b.dueDate);
   });
 
+  const subtextColor = isDark ? 'text-[#e2d8c3]' : 'text-[#4a3b2c]';
+
   return (
-    <div className="space-y-2 px-1">
+    <div className="space-y-2.5 px-1">
       {sorted.map((item) => {
         const status = getItemStatus(item, todayStr);
         const friendlyDate = formatFriendlyDate(item.dueDate, todayStr);
         const isAnimeOrManhwa = item.category === 'Anime' || item.category === 'Manhwa';
 
-        const cardStyle = isDark
-          ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
-          : 'bg-white border-[#382c38]/15 text-[#121214]';
+        let cardBg = isDark
+          ? 'bg-[#1a171a] border-[#382c38] text-[#faf1ec]'
+          : 'bg-white border-[#e5e5e5] text-[#121214]';
+
+        if (status === 'Overdue' && !item.isDone) {
+          cardBg = isDark
+            ? 'bg-[#281518] border-[#851f22]/70 border-l-4 border-l-[#ef4444] text-[#faf1ec]'
+            : 'bg-[#fff5f5] border-[#fca5a5] border-l-4 border-l-[#dc2626] text-[#121214]';
+        } else if (status === 'Due Today' && !item.isDone) {
+          cardBg = isDark
+            ? 'bg-[#2b2614] border-[#efcc59]/70 border-l-4 border-l-[#eab308] text-[#faf1ec]'
+            : 'bg-[#fefce8] border-[#fef08a] border-l-4 border-l-[#ca8a04] text-[#121214]';
+        }
 
         return (
           <div
             key={item.id}
             className={`p-3 rounded-2xl border transition-all duration-200 ${
-              item.isDone
-                ? 'bg-[#f8f5ef]/10 border-[#382c38]/12 opacity-60'
-                : status === 'Overdue'
-                ? 'bg-[#f1f5b1] border-l-4 border-l-[#851f22] border-[#382c38]/25 text-[#121214]'
-                : status === 'Due Today'
-                ? 'bg-[#f1f5b1] border-l-4 border-l-[#efcc59] border-[#382c38]/25 text-[#121214]'
-                : cardStyle
-            }`}
+              item.isDone ? 'opacity-50 line-through' : ''
+            } ${cardBg}`}
           >
             <div className="flex items-start justify-between gap-2">
-              <div className="flex items-start gap-2 min-w-0 flex-1">
+              <div className="flex items-start gap-2.5 min-w-0 flex-1">
                 <button
                   onClick={() => onToggleDone(item.id, item.isDone)}
                   className="mt-0.5 shrink-0 transition-transform duration-150 hover:scale-110"
                 >
                   {item.isDone ? (
-                    <CheckSquare className="w-4 h-4 text-[#386641] fill-[#386641]/15" />
+                    <CheckSquare className="w-4.5 h-4.5 text-[#4ade80] fill-[#4ade80]/15" />
                   ) : (
-                    <Square className="w-4 h-4 text-[#8f7c60]" />
+                    <Square className={`w-4.5 h-4.5 ${isDark ? 'text-[#e2d8c3]' : 'text-[#4a3b2c]'}`} />
                   )}
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <h4 className={`text-xs font-bold leading-snug ${item.isDone ? 'line-through text-[#8f7c60]' : (status === 'Overdue' || status === 'Due Today') ? 'text-[#121214]' : (isDark ? 'text-[#faf1ec]' : 'text-[#121214]')}`}>
+                    <h4 className={`text-xs font-bold leading-snug ${isDark ? 'text-white' : 'text-[#121214]'}`}>
                       {item.title}
                     </h4>
                     {item.recurrence && item.recurrence !== 'none' && (
-                      <span className="text-[9px] bg-[#efcc59]/20 text-[#121214] border border-[#efcc59]/40 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0">
-                        <Repeat className="w-2 h-2" />
+                      <span className="text-[9px] bg-[#efcc59]/25 text-[#f1f5b1] border border-[#efcc59]/50 px-1.5 py-0.5 rounded font-bold flex items-center gap-0.5 shrink-0">
+                        <Repeat className="w-2.5 h-2.5" />
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className={`text-[10px] font-semibold ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>{item.category}</span>
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className={`text-[10px] font-bold ${subtextColor}`}>{item.category}</span>
                     {status === 'Overdue' && !item.isDone && (
-                      <span className="text-[9px] bg-[#851f22] text-[#faf1ec] px-1.5 py-0.5 rounded font-bold">OVERDUE</span>
+                      <span className="text-[9px] bg-[#dc2626] text-white px-1.5 py-0.5 rounded font-bold tracking-wide">OVERDUE</span>
                     )}
                     {status === 'Due Today' && !item.isDone && (
-                      <span className="text-[9px] bg-[#efcc59] text-[#121214] px-1.5 py-0.5 rounded font-bold">TODAY</span>
+                      <span className="text-[9px] bg-[#ca8a04] text-white px-1.5 py-0.5 rounded font-bold tracking-wide">TODAY</span>
                     )}
                   </div>
                 </div>
               </div>
 
-              <span className={`text-[10px] font-mono whitespace-nowrap font-bold shrink-0 ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>
+              <span className={`text-[10px] font-mono whitespace-nowrap font-bold shrink-0 ${subtextColor}`}>
                 {friendlyDate}
               </span>
             </div>
 
             {item.notes && (
-              <p className={`text-[10px] line-clamp-1 pl-6 mt-1 font-medium ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>{item.notes}</p>
+              <p className={`text-[10px] line-clamp-1 pl-7 mt-1.5 font-semibold ${subtextColor}`}>{item.notes}</p>
             )}
 
-            <div className="flex items-center justify-between pt-2 mt-1 border-t border-[#382c38]/10">
+            <div className="flex items-center justify-between pt-2.5 mt-2 border-t border-[#382c38]/20">
               {isAnimeOrManhwa ? (
                 <button
                   onClick={() => onToggleWatched(item.id, !!item.isWatched)}
-                  className={`px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 transition-all duration-150 ${
+                  className={`px-2.5 py-1 rounded-xl font-bold text-[10px] flex items-center gap-1 transition-all duration-150 ${
                     item.isWatched
-                      ? 'bg-[#386641]/15 text-[#386641] border border-[#386641]/30'
-                      : 'bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40'
+                      ? (isDark ? 'bg-[#386641]/40 text-[#4ade80] border border-[#386641]' : 'bg-[#386641]/15 text-[#14532d] border border-[#386641]/40')
+                      : (isDark ? 'bg-[#efcc59]/20 text-[#f1f5b1] border border-[#efcc59]/50' : 'bg-[#efcc59]/30 text-[#3a2e00] border border-[#efcc59]')
                   }`}
                 >
-                  {item.isWatched ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+                  {item.isWatched ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                   <span>{item.isWatched ? 'Watched' : 'Unwatched'}</span>
                 </button>
               ) : (
                 <div />
               )}
 
-              <div className="flex items-center gap-1 ml-auto">
+              <div className="flex items-center gap-1.5 ml-auto">
                 {item.link && (
                   <button
                     onClick={() => onOpenLink(item.link!, item.title)}
-                    className="p-1.5 bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40 rounded-lg transition-all duration-150 hover:scale-110"
+                    className={`p-1.5 rounded-lg border transition-all duration-150 hover:scale-110 ${
+                      isDark ? 'bg-[#efcc59]/20 text-[#f1f5b1] border-[#efcc59]/40' : 'bg-[#efcc59]/30 text-[#121214] border-[#efcc59]'
+                    }`}
                   >
-                    <ExternalLink className="w-3 h-3" />
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </button>
                 )}
                 <button
                   onClick={() => onEditItem(item)}
-                  className="p-1.5 bg-[#f8f5ef]/20 text-[#faf1ec] border border-[#382c38]/25 rounded-lg transition-all duration-150 hover:scale-110"
+                  className={`p-1.5 rounded-lg border transition-all duration-150 hover:scale-110 ${
+                    isDark ? 'bg-[#2a242a] text-[#f1f5b1] border-[#382c38]' : 'bg-[#f8f5ef] text-[#121214] border-[#382c38]/25'
+                  }`}
                 >
-                  <Edit3 className="w-3 h-3" />
+                  <Edit3 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => onDeleteItem(item)}
-                  className="p-1.5 bg-[#851f22]/15 text-[#851f22] border border-[#851f22]/25 rounded-lg transition-all duration-150 hover:scale-110 hover:bg-[#851f22] hover:text-[#faf1ec]"
+                  className={`p-1.5 rounded-lg border transition-all duration-150 hover:scale-110 ${
+                    isDark ? 'bg-[#851f22]/30 text-[#fca5a5] border-[#851f22]/60 hover:bg-[#851f22] hover:text-white' : 'bg-[#851f22]/15 text-[#851f22] border-[#851f22]/40 hover:bg-[#851f22] hover:text-white'
+                  }`}
                 >
-                  <Trash2 className="w-3 h-3" />
+                  <Trash2 className="w-3.5 h-3.5" />
                 </button>
               </div>
             </div>
@@ -331,42 +343,44 @@ const MobileAnimeList: React.FC<{
   const pct = animeManhwa.length > 0 ? Math.round((watched / animeManhwa.length) * 100) : 0;
 
   const cardStyle = isDark
-    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
-    : 'bg-white border-[#382c38]/15 text-[#121214]';
+    ? 'bg-[#1a171a] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#e5e5e5] text-[#121214]';
+
+  const subtextColor = isDark ? 'text-[#e2d8c3]' : 'text-[#4a3b2c]';
 
   return (
     <div className="space-y-3 px-1">
       {animeManhwa.length > 0 && (
-        <div className={`p-2.5 border rounded-xl ${cardStyle}`}>
-          <div className="flex items-center justify-between text-[10px] font-bold mb-1.5">
-            <span>Anime & Manhwa</span>
-            <span className="font-mono text-[#8f7c60]">{watched}/{animeManhwa.length} watched</span>
+        <div className={`p-3 border rounded-2xl ${cardStyle}`}>
+          <div className="flex items-center justify-between text-[11px] font-bold mb-2">
+            <span>Anime & Manhwa Progress</span>
+            <span className={`font-mono ${subtextColor}`}>{watched}/{animeManhwa.length} watched</span>
           </div>
-          <div className="h-1 bg-[#f8f5ef]/20 rounded-full overflow-hidden">
-            <div className="h-full bg-[#386641] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
+          <div className="h-1.5 bg-[#382c38]/30 rounded-full overflow-hidden">
+            <div className="h-full bg-[#4ade80] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
 
       {animeManhwa.map((item) => (
-        <div key={item.id} className={`p-3 border rounded-2xl space-y-2 ${cardStyle}`}>
+        <div key={item.id} className={`p-3.5 border rounded-2xl space-y-2.5 ${cardStyle}`}>
           <div className="flex items-start justify-between gap-2">
-            <div>
-              <h4 className="text-xs font-bold">{item.title}</h4>
-              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#8f7c60]">
-                <span className="font-semibold">{item.category}</span>
+            <div className="flex-1 min-w-0">
+              <h4 className={`text-xs font-bold ${isDark ? 'text-white' : 'text-[#121214]'}`}>{item.title}</h4>
+              <div className={`flex items-center gap-1.5 mt-1 text-[10px] font-semibold ${subtextColor}`}>
+                <span>{item.category}</span>
                 <span>• {formatFriendlyDate(item.dueDate, todayStr)}</span>
               </div>
             </div>
             <button
               onClick={() => onToggleWatched(item.id, !!item.isWatched)}
-              className={`px-2 py-1 rounded-lg font-bold text-[10px] flex items-center gap-1 shrink-0 ${
+              className={`px-2.5 py-1 rounded-xl font-bold text-[10px] flex items-center gap-1 shrink-0 transition-all duration-150 ${
                 item.isWatched
-                  ? 'bg-[#386641]/15 text-[#386641] border border-[#386641]/30'
-                  : 'bg-[#efcc59]/15 text-[#121214] border border-[#efcc59]/40'
+                  ? (isDark ? 'bg-[#386641]/40 text-[#4ade80] border border-[#386641]' : 'bg-[#386641]/15 text-[#14532d] border border-[#386641]/40')
+                  : (isDark ? 'bg-[#efcc59]/20 text-[#f1f5b1] border border-[#efcc59]/50' : 'bg-[#efcc59]/30 text-[#3a2e00] border border-[#efcc59]')
               }`}
             >
-              {item.isWatched ? <Eye className="w-3 h-3" /> : <EyeOff className="w-3 h-3" />}
+              {item.isWatched ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
               <span>{item.isWatched ? 'Watched' : 'Unwatched'}</span>
             </button>
           </div>
@@ -391,32 +405,34 @@ const MobileStatusBreakdown: React.FC<{
   const upcoming = validItems.filter((i) => !i.isDone && getItemStatus(i, todayStr) === 'Upcoming');
 
   const cardStyle = isDark
-    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
-    : 'bg-white border-[#382c38]/15 text-[#121214]';
+    ? 'bg-[#1a171a] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#e5e5e5] text-[#121214]';
 
   const groups = [
-    { title: '🚨 Overdue', list: overdue, badge: 'bg-[#851f22] text-white' },
-    { title: '⭐ Due Today', list: dueToday, badge: 'bg-[#efcc59] text-[#121214]' },
-    { title: '📅 Upcoming', list: upcoming, badge: 'bg-[#faf1ec]/20 text-current border border-[#382c38]/20' },
+    { title: '🚨 Overdue', list: overdue, badge: 'bg-[#dc2626] text-white' },
+    { title: '⭐ Due Today', list: dueToday, badge: 'bg-[#ca8a04] text-white' },
+    { title: '📅 Upcoming', list: upcoming, badge: isDark ? 'bg-[#382c38] text-white' : 'bg-[#e5e5e5] text-[#121214]' },
   ];
 
   return (
     <div className="space-y-3 px-1">
       {groups.map(({ title, list, badge }) => (
-        <div key={title} className={`p-3 border rounded-2xl space-y-2 ${cardStyle}`}>
+        <div key={title} className={`p-3.5 border rounded-2xl space-y-2.5 ${cardStyle}`}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold">{title}</span>
+            <span className={`text-xs font-bold ${isDark ? 'text-white' : 'text-[#121214]'}`}>{title}</span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badge}`}>
               {list.length}
             </span>
           </div>
 
           {list.map((item) => (
-            <div key={item.id} className="p-2.5 bg-[#faf1ec]/10 rounded-xl flex items-center justify-between text-xs border border-[#382c38]/15">
+            <div key={item.id} className={`p-2.5 rounded-xl flex items-center justify-between text-xs border ${
+              isDark ? 'bg-[#2a242a] border-[#382c38] text-[#faf1ec]' : 'bg-[#faf1ec]/60 border-[#e5e5e5] text-[#121214]'
+            }`}>
               <span className="font-bold truncate pr-2">{item.title}</span>
               <button
                 onClick={() => onToggleDone(item.id, item.isDone)}
-                className="text-[10px] font-bold px-2 py-1 bg-[#121214] text-[#faf1ec] rounded-lg shrink-0 border border-[#382c38]"
+                className="text-[10px] font-bold px-2.5 py-1 bg-[#121214] text-[#f1f5b1] rounded-lg shrink-0 border border-[#382c38]"
               >
                 Mark Done
               </button>
@@ -440,14 +456,6 @@ const MobileSettings: React.FC<{
   React.useEffect(() => {
     setInputCode(settings.syncCode || '');
   }, [settings.syncCode]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value.toUpperCase();
-    setInputCode(val);
-    if (val.trim()) {
-      onUpdateSettings({ syncCode: val.trim() });
-    }
-  };
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(settings.syncCode);
@@ -473,8 +481,10 @@ const MobileSettings: React.FC<{
 
   const isDark = Boolean(settings.darkMode);
   const cardStyle = isDark
-    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
-    : 'bg-white border-[#382c38]/15 text-[#121214]';
+    ? 'bg-[#1a171a] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#e5e5e5] text-[#121214]';
+
+  const subtextColor = isDark ? 'text-[#e2d8c3]' : 'text-[#4a3b2c]';
 
   return (
     <div className="px-1 space-y-3 pb-4">
@@ -487,12 +497,12 @@ const MobileSettings: React.FC<{
             </div>
             <span>Mobile Sync Pair</span>
           </div>
-          <span className="text-[10px] bg-[#386641]/15 text-[#386641] font-mono font-bold px-2 py-0.5 rounded-full border border-[#386641]/30">
+          <span className="text-[10px] bg-[#386641]/30 text-[#4ade80] font-mono font-bold px-2.5 py-0.5 rounded-full border border-[#386641]">
             Active
           </span>
         </div>
 
-        <p className={`text-[11px] font-medium ${isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]'}`}>
+        <p className={`text-[11px] font-semibold ${subtextColor}`}>
           Enter or edit your secret pair code to sync with Desktop:
         </p>
 
@@ -512,34 +522,39 @@ const MobileSettings: React.FC<{
 
           <div className="grid grid-cols-3 gap-1.5 pt-1">
             <button
+              type="button"
               onClick={() => {
                 if (inputCode.trim()) {
                   onUpdateSettings({ syncCode: inputCode.trim() });
                 }
               }}
-              className="py-2 bg-[#386641] hover:bg-[#2d5234] text-white rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
+              className="py-2.5 bg-[#386641] hover:bg-[#2d5234] text-white rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition shadow-xs"
             >
               <Check className="w-3.5 h-3.5" />
               <span>Apply</span>
             </button>
 
             <button
+              type="button"
               onClick={handleCopyCode}
-              className="py-2 bg-[#f8f5ef]/10 hover:bg-[#faf1ec]/20 border border-[#382c38]/30 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
+              className={`py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition border ${
+                isDark ? 'bg-[#2a242a] text-[#faf1ec] border-[#382c38]' : 'bg-[#f8f5ef] text-[#121214] border-[#382c38]/25'
+              }`}
             >
-              {copiedCode ? <Check className="w-3.5 h-3.5 text-[#386641]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#8f7c60]" />}
+              {copiedCode ? <Check className="w-3.5 h-3.5 text-[#4ade80]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#efcc59]" />}
               <span>{copiedCode ? 'Copied' : 'Copy'}</span>
             </button>
 
             <button
+              type="button"
               onClick={() => {
                 const newCode = `IZ-${Math.floor(1000 + Math.random() * 9000)}`;
                 setInputCode(newCode);
                 onUpdateSettings({ syncCode: newCode });
               }}
-              className="py-2 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-current border border-[#efcc59]/50 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
+              className="py-2.5 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-[#f1f5b1] border border-[#efcc59]/50 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition shadow-xs"
             >
-              <Sparkles className="w-3.5 h-3.5" />
+              <Sparkles className="w-3.5 h-3.5 text-[#efcc59]" />
               <span>New</span>
             </button>
           </div>
@@ -550,7 +565,7 @@ const MobileSettings: React.FC<{
       <div className={`p-4 border rounded-2xl space-y-2.5 text-xs shadow-xs ${cardStyle}`}>
         <div className="flex items-center justify-between">
           <div className="font-bold flex items-center gap-2">
-            <Moon className="w-4 h-4 text-[#8f7c60]" />
+            <Moon className="w-4 h-4 text-[#efcc59]" />
             <span>Theme Mode</span>
           </div>
           <button
@@ -559,18 +574,18 @@ const MobileSettings: React.FC<{
               e.preventDefault();
               onUpdateSettings({ darkMode: !settings.darkMode });
             }}
-            className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer ${
-              settings.darkMode ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
+            className={`w-11 h-6 rounded-full relative transition-colors cursor-pointer border ${
+              settings.darkMode ? 'bg-[#efcc59] border-[#efcc59]' : 'bg-[#beb5a0] border-[#8f7c60]'
             }`}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#121214] transition-transform ${
+              className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 rounded-full bg-[#121214] transition-transform ${
                 settings.darkMode ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>
         </div>
-        <p className={`text-[10px] ${isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]'}`}>
+        <p className={`text-[10px] font-semibold ${subtextColor}`}>
           {settings.darkMode ? 'Dark Mode Active (#121214)' : 'Light Mode Active (#faf1ec)'}
         </p>
       </div>
@@ -579,7 +594,7 @@ const MobileSettings: React.FC<{
       <div className={`p-4 border rounded-2xl space-y-2.5 text-xs shadow-xs ${cardStyle}`}>
         <div className="flex items-center justify-between">
           <div className="font-bold flex items-center gap-2">
-            <Volume2 className="w-4 h-4 text-[#8f7c60]" />
+            <Volume2 className="w-4 h-4 text-[#efcc59]" />
             <span>Startup Sound Cue</span>
           </div>
           <button
@@ -588,12 +603,12 @@ const MobileSettings: React.FC<{
               e.preventDefault();
               onUpdateSettings({ startupSoundEnabled: !settings.startupSoundEnabled });
             }}
-            className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer ${
-              settings.startupSoundEnabled ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
+            className={`w-11 h-6 rounded-full relative transition-colors cursor-pointer border ${
+              settings.startupSoundEnabled ? 'bg-[#efcc59] border-[#efcc59]' : 'bg-[#beb5a0] border-[#8f7c60]'
             }`}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#121214] transition-transform ${
+              className={`absolute top-0.5 left-0.5 w-4.5 h-4.5 rounded-full bg-[#121214] transition-transform ${
                 settings.startupSoundEnabled ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
@@ -603,6 +618,7 @@ const MobileSettings: React.FC<{
         {onTestSound && (
           <div className="flex items-center gap-2 pt-1">
             <button
+              type="button"
               onClick={onTestSound}
               className="px-3 py-1.5 bg-[#121214] text-[#faf1ec] rounded-xl font-bold text-[10px] flex items-center gap-1 border border-[#382c38]"
             >
@@ -610,8 +626,10 @@ const MobileSettings: React.FC<{
               <span>Test Audio</span>
             </button>
 
-            <label className="px-3 py-1.5 bg-[#f8f5ef]/10 text-current border border-[#382c38]/20 rounded-xl font-bold text-[10px] flex items-center gap-1 cursor-pointer">
-              <Upload className="w-3 h-3 text-[#8f7c60]" />
+            <label className={`px-3 py-1.5 rounded-xl font-bold text-[10px] flex items-center gap-1 cursor-pointer border ${
+              isDark ? 'bg-[#2a242a] text-[#faf1ec] border-[#382c38]' : 'bg-[#f8f5ef] text-[#121214] border-[#382c38]/20'
+            }`}>
+              <Upload className="w-3 h-3 text-[#efcc59]" />
               <span>Upload Custom</span>
               <input
                 type="file"
