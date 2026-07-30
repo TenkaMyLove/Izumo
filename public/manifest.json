@@ -1,0 +1,18 @@
+{
+  "short_name": "Izumo",
+  "name": "Izumo - Agenda & Tracker",
+  "description": "Daily anime, manhwa, manga and task agenda tracker",
+  "icons": [
+    {
+      "src": "/app-icon.png",
+      "type": "image/png",
+      "sizes": "192x192 512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/",
+  "background_color": "#121214",
+  "theme_color": "#121214",
+  "display": "standalone",
+  "orientation": "portrait"
+}
