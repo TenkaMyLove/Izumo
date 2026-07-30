@@ -63,7 +63,11 @@ export default function App() {
       const res = await fetch('/api/data');
       if (res.ok) {
         const data = await res.json();
-        setItems(data.items || []);
+        const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
+        const cleanItems = rawItems.filter(
+          (i: any): i is AgendaItem => Boolean(i && typeof i === 'object' && i.id && i.category)
+        );
+        setItems(cleanItems);
         setSettings(data.settings || getInitialSeedData().settings);
       }
     } catch (e) {
@@ -96,7 +100,7 @@ export default function App() {
 
     // Check if next episode already exists in current items
     const alreadyExists = items.some(
-      (i) => i.dueDate === nextDueDate && i.title.toLowerCase() === nextTitle.toLowerCase()
+      (i) => i && i.dueDate === nextDueDate && i.title?.toLowerCase() === nextTitle.toLowerCase()
     );
 
     if (!alreadyExists) {
@@ -127,7 +131,13 @@ export default function App() {
         });
         if (res.ok) {
           const result = await res.json();
-          setItems((prev) => prev.map((i) => (i.id === itemData.id ? result.item : i)));
+          const savedItem: AgendaItem | null =
+            result.item || (result.id && result.category ? result : null);
+          if (savedItem) {
+            setItems((prev) =>
+              prev.map((i) => (i.id === itemData.id ? { ...i, ...savedItem } : i))
+            );
+          }
         }
       } catch {
         setItems((prev) =>
@@ -148,7 +158,11 @@ export default function App() {
         });
         if (res.ok) {
           const result = await res.json();
-          setItems((prev) => [result.item, ...prev]);
+          const newItem: AgendaItem | null =
+            result.item || (result.id && result.category ? result : null);
+          if (newItem) {
+            setItems((prev) => [newItem, ...prev.filter((i) => Boolean(i && i.id))]);
+          }
         }
       } catch {
         const newItem: AgendaItem = {
@@ -164,7 +178,7 @@ export default function App() {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
-        setItems((prev) => [newItem, ...prev]);
+        setItems((prev) => [newItem, ...prev.filter((i) => Boolean(i && i.id))]);
       }
     }
     setIsSyncing(false);

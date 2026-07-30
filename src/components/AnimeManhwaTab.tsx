@@ -25,7 +25,7 @@ export const AnimeManhwaTab: React.FC<AnimeManhwaTabProps> = ({
   const [filterView, setFilterView] = useState<'all' | 'unwatched' | 'watched'>('all');
 
   const animeManhwaItems = items.filter(
-    (item) => item.category === 'Anime' || item.category === 'Manhwa' || item.category === 'Manga'
+    (item) => item?.category === 'Anime' || item?.category === 'Manhwa' || item?.category === 'Manga'
   );
 
   const unwatchedItems = animeManhwaItems.filter((item) => !item.isWatched);

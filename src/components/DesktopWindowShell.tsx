@@ -58,7 +58,7 @@ export const DesktopWindowShell: React.FC<DesktopWindowShellProps> = ({
       id: 'anime-manhwa' as ActiveTab,
       icon: <Film className="w-4 h-4" />,
       label: 'Anime / Manhwa / Manga',
-      badge: items.filter((i) => i.category === 'Anime' || i.category === 'Manhwa' || i.category === 'Manga').length,
+      badge: items.filter((i) => i?.category === 'Anime' || i?.category === 'Manhwa' || i?.category === 'Manga').length,
       badgeClass: 'bg-[#efcc59]/20 text-[#efcc59]',
     },
     {

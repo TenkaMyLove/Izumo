@@ -320,7 +320,7 @@ const MobileAnimeList: React.FC<{
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
 }> = ({ items, todayStr, onToggleWatched, onEditItem, onOpenLink }) => {
-  const animeManhwa = items.filter((i) => i.category === 'Anime' || i.category === 'Manhwa');
+  const animeManhwa = items.filter((i) => i?.category === 'Anime' || i?.category === 'Manhwa');
   const watched = animeManhwa.filter((i) => i.isWatched).length;
   const pct = animeManhwa.length > 0 ? Math.round((watched / animeManhwa.length) * 100) : 0;
 
