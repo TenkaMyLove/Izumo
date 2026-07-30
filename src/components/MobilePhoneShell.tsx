@@ -215,9 +215,9 @@ const MobileMainList: React.FC<{
               item.isDone
                 ? 'bg-[#f8f5ef] border-[#382c38]/12 opacity-60'
                 : status === 'Overdue'
-                ? 'bg-[#851f22]/8 border-l-2 border-l-[#851f22] border-[#851f22]/25'
+                ? 'bg-[#f1f5b1] border-l-2 border-l-[#851f22] border-[#382c38]/25 text-[#121214]'
                 : status === 'Due Today'
-                ? 'bg-[#efcc59]/10 border-l-2 border-l-[#efcc59] border-[#efcc59]/35'
+                ? 'bg-[#f1f5b1] border-l-2 border-l-[#efcc59] border-[#382c38]/25 text-[#121214]'
                 : 'bg-white border-[#382c38]/15'
             }`}
           >

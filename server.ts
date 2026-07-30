@@ -21,6 +21,13 @@ function loadStoredData(): { items: AgendaItem[]; settings: AppSettings } {
       const content = fs.readFileSync(DATA_FILE, 'utf-8');
       const parsed = JSON.parse(content);
       if (parsed.items && parsed.settings) {
+        const todayStr = getTodayDateString();
+        if (!parsed.settings.simulatedCurrentDate || parsed.settings.simulatedCurrentDate <= todayStr) {
+          parsed.settings.simulatedCurrentDate = todayStr;
+        }
+        const activeTodayStr = getTodayDateString(parsed.settings.simulatedCurrentDate);
+        parsed.items = (parsed.items || []).filter((item: AgendaItem) => !isDoneItemExpired(item, activeTodayStr));
+        saveStoredData(parsed.items, parsed.settings);
         return parsed;
       }
     }
@@ -54,6 +61,16 @@ async function startServer() {
 
   // Get all data
   app.get('/api/data', (req, res) => {
+    const todayStr = getTodayDateString();
+    if (!currentSettings.simulatedCurrentDate || currentSettings.simulatedCurrentDate <= todayStr) {
+      currentSettings.simulatedCurrentDate = todayStr;
+    }
+    const activeTodayStr = getTodayDateString(currentSettings.simulatedCurrentDate);
+    const beforeCount = currentItems.length;
+    currentItems = currentItems.filter((item) => !isDoneItemExpired(item, activeTodayStr));
+    if (beforeCount !== currentItems.length) {
+      saveStoredData(currentItems, currentSettings);
+    }
     res.json({ items: currentItems, settings: currentSettings });
   });
 

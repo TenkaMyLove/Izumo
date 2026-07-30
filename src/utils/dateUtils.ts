@@ -4,14 +4,16 @@ import { AgendaItem, ItemStatus } from '../types';
  * Gets today's date in YYYY-MM-DD string format (using local timezone or simulated override)
  */
 export function getTodayDateString(simulatedDateOverride?: string): string {
-  if (simulatedDateOverride) {
-    return simulatedDateOverride;
-  }
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
   const day = String(now.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const realTodayStr = `${year}-${month}-${day}`;
+
+  if (simulatedDateOverride && simulatedDateOverride > realTodayStr) {
+    return simulatedDateOverride;
+  }
+  return realTodayStr;
 }
 
 /**

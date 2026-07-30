@@ -76,7 +76,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
     const status = getItemStatus(item, todayStr);
     switch (status) {
       case 'Done': return 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]';
-      case 'Overdue': return 'bg-[#851f22]/20 border-l-4 border-l-[#ff5555] border-[#851f22]/40 text-[#faf1ec]';
+      case 'Overdue': return 'bg-[#f1f5b1] border-l-4 border-l-[#851f22] border-[#382c38]/25 text-[#121214] shadow-sm hover:bg-[#e6eba0]';
       default: return 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] shadow-sm hover:bg-[#e6eba0]';
     }
   };

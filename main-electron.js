@@ -6,8 +6,8 @@ import './dist/server.cjs'; // Starts express backend server silently
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-let mainWindow: BrowserWindow | null = null;
-let tray: Tray | null = null;
+let mainWindow = null;
+let tray = null;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -27,7 +27,7 @@ function createWindow() {
 
   // Minimize to tray on close
   mainWindow.on('close', (event) => {
-    if (!(app as unknown as { isQuitting?: boolean }).isQuitting) {
+    if (!app.isQuitting) {
       event.preventDefault();
       mainWindow?.hide();
     }
@@ -57,7 +57,7 @@ function createTray() {
     {
       label: 'Quit Izumo',
       click: () => {
-        (app as unknown as { isQuitting?: boolean }).isQuitting = true;
+        app.isQuitting = true;
         app.quit();
       },
     },
