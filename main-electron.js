@@ -12,14 +12,14 @@ let tray = null;
 
 function getBackupFilePath() {
   try {
-    const baseDir = app.isPackaged ? app.getPath('userData') : process.cwd();
+    const baseDir = app.isPackaged ? app.getPath('userData') : (process.env.APPDATA ? path.join(process.env.APPDATA, 'Izumo') : process.cwd());
     const dataDir = path.join(baseDir, 'data');
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
     return path.join(dataDir, 'agenda.json');
   } catch (e) {
-    const fallbackDir = path.join(process.cwd(), 'data');
+    const fallbackDir = path.join(path.dirname(app.getPath('userData')), 'Izumo', 'data');
     if (!fs.existsSync(fallbackDir)) {
       fs.mkdirSync(fallbackDir, { recursive: true });
     }
@@ -110,7 +110,7 @@ function createTray() {
 }
 
 app.whenReady().then(() => {
-  if (process.platform === 'win32') {
+  if (process.platform === 'win32' && app.isPackaged) {
     app.setLoginItemSettings({
       openAtLogin: true,
     });

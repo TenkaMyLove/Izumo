@@ -5,8 +5,23 @@ import { AgendaItem, AppSettings } from './src/types';
 import { getInitialSeedData } from './src/utils/seedData';
 import { isDoneItemExpired, getTodayDateString } from './src/utils/dateUtils';
 
+import os from 'os';
+
 const PORT = 3000;
-const DATA_DIR = path.join(process.cwd(), 'data');
+
+function getWritableDataDir(): string {
+  if (process.env.APPDATA) {
+    return path.join(process.env.APPDATA, 'Izumo', 'data');
+  }
+  const cwd = process.cwd();
+  const isSystemDir = cwd.toLowerCase().includes('system32') || cwd.toLowerCase().includes('windows');
+  if (!isSystemDir) {
+    return path.join(cwd, 'data');
+  }
+  return path.join(os.homedir(), '.izumo', 'data');
+}
+
+const DATA_DIR = getWritableDataDir();
 const DATA_FILE = path.join(DATA_DIR, 'agenda.json');
 
 // Ensure data directory exists
