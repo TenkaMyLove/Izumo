@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { ActiveTab, AgendaItem, AppSettings, ViewMode } from './types';
 import { TopDeviceBar } from './components/TopDeviceBar';
 import { DesktopWindowShell } from './components/DesktopWindowShell';
