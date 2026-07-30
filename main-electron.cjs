@@ -20,7 +20,12 @@ function createWindow() {
     },
   });
 
-  mainWindow.loadURL('http://localhost:3000');
+  const REMOTE_URL = process.env.SYNC_URL || 'https://izumo-three.vercel.app';
+
+  mainWindow.loadURL(REMOTE_URL).catch((err) => {
+    console.warn('Failed to load remote sync URL, falling back to local server:', err);
+    mainWindow.loadURL('http://localhost:3000');
+  });
 
   mainWindow.on('close', (event) => {
     if (!app.isQuitting) {
