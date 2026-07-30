@@ -10,14 +10,27 @@ const __dirname = path.dirname(__filename);
 let mainWindow = null;
 let tray = null;
 
-// Handle writing automatic data backup to local disk e:\Izumo\data\agenda.json whenever synced from Vercel
-ipcMain.on('save-local-backup', (event, data) => {
+function getBackupFilePath() {
   try {
-    const dataDir = path.join(__dirname, 'data');
+    const baseDir = app.isPackaged ? app.getPath('userData') : process.cwd();
+    const dataDir = path.join(baseDir, 'data');
     if (!fs.existsSync(dataDir)) {
       fs.mkdirSync(dataDir, { recursive: true });
     }
-    const filePath = path.join(dataDir, 'agenda.json');
+    return path.join(dataDir, 'agenda.json');
+  } catch (e) {
+    const fallbackDir = path.join(process.cwd(), 'data');
+    if (!fs.existsSync(fallbackDir)) {
+      fs.mkdirSync(fallbackDir, { recursive: true });
+    }
+    return path.join(fallbackDir, 'agenda.json');
+  }
+}
+
+// Handle writing automatic data backup to local disk whenever synced from Vercel
+ipcMain.on('save-local-backup', (event, data) => {
+  try {
+    const filePath = getBackupFilePath();
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf-8');
   } catch (e) {
     console.warn('Failed to write backup to local disk agenda.json:', e);
