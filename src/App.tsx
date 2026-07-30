@@ -18,10 +18,26 @@ import { getItemStatus, getTodayDateString } from './utils/dateUtils';
 import { getInitialSeedData } from './utils/seedData';
 import { incrementEpisodeTitle, calculateNextDueDate } from './utils/recurringUtils';
 
+const getInitialSyncCode = (): string => {
+  if (typeof window !== 'undefined' && window.localStorage) {
+    const saved = localStorage.getItem('izumo_sync_code');
+    if (saved && saved.trim()) return saved.trim().toUpperCase();
+  }
+  const newCode = `IZ-${Math.floor(1000 + Math.random() * 9000)}`;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    localStorage.setItem('izumo_sync_code', newCode);
+  }
+  return newCode;
+};
+
 export default function App() {
   // Initial state: start empty to avoid flashing stale seed data before server response
   const [items, setItems] = useState<AgendaItem[]>([]);
-  const [settings, setSettings] = useState<AppSettings>(() => getInitialSeedData().settings);
+  const [settings, setSettings] = useState<AppSettings>(() => {
+    const seedSettings = getInitialSeedData().settings;
+    const initialCode = getInitialSyncCode();
+    return { ...seedSettings, syncCode: initialCode };
+  });
   // Auto-detect viewMode: Default to 'mobile' on mobile devices, 'desktop' for actual desktop window app
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
     if (typeof window !== 'undefined' && window.innerWidth < 768) {
@@ -82,20 +98,33 @@ export default function App() {
           (i: any): i is AgendaItem => Boolean(i && typeof i === 'object' && i.id && i.category)
         );
         setItems(cleanItems);
-        setSettings(data.settings || getInitialSeedData().settings);
+
+        const currentCode =
+          (typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sync_code') : null) ||
+          settings.syncCode ||
+          'AG-9842';
+
+        setSettings({
+          ...(data.settings || getInitialSeedData().settings),
+          syncCode: currentCode,
+        });
 
         // Auto-backup to localStorage in case Vercel is unreachable
         try {
           localStorage.setItem('izumo_auto_backup_items', JSON.stringify(cleanItems));
-          localStorage.setItem('izumo_auto_backup_settings', JSON.stringify(data.settings || {}));
-          if (data.settings?.syncCode) {
-            localStorage.setItem('izumo_sync_code', data.settings.syncCode);
-          }
+          localStorage.setItem(
+            'izumo_auto_backup_settings',
+            JSON.stringify({ ...(data.settings || {}), syncCode: currentCode })
+          );
+          localStorage.setItem('izumo_sync_code', currentCode);
         } catch (e) {}
 
         // If running in Electron desktop app, backup directly to local disk e:\Izumo\data\agenda.json
         if (typeof window !== 'undefined' && (window as any).electronAPI?.saveLocalBackup) {
-          (window as any).electronAPI.saveLocalBackup(data);
+          (window as any).electronAPI.saveLocalBackup({
+            items: cleanItems,
+            settings: { ...(data.settings || {}), syncCode: currentCode },
+          });
         }
       }
     } catch (e) {
@@ -109,7 +138,7 @@ export default function App() {
     } finally {
       setIsSyncing(false);
     }
-  }, [getApiHeaders]);
+  }, [getApiHeaders, settings.syncCode]);
 
   // Initial load & Polling for live sync between Desktop & Mobile
   useEffect(() => {
