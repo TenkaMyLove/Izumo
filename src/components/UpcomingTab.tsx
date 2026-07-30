@@ -20,6 +20,7 @@ import {
 interface UpcomingTabProps {
   items: AgendaItem[];
   simulatedDate?: string;
+  darkMode?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
@@ -31,6 +32,7 @@ interface UpcomingTabProps {
 export const UpcomingTab: React.FC<UpcomingTabProps> = ({
   items,
   simulatedDate,
+  darkMode,
   onToggleDone,
   onToggleWatched,
   onEditItem,
@@ -38,6 +40,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
   onOpenLink,
   onAddNew,
 }) => {
+  const isDark = Boolean(darkMode);
   const todayStr = getTodayDateString(simulatedDate);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState('');
@@ -87,7 +90,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
   return (
     <div className="space-y-5">
       {/* Header Banner */}
-      <div className="bg-[#f1f5b1] border border-[#382c38]/20 text-[#121214] rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md">
+      <div className="bg-white border border-[#382c38]/20 text-[#121214] rounded-3xl p-5 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 shadow-md transition-all duration-200">
         <div className="flex-1">
           <div className="flex items-center gap-2.5 mb-1">
             <div className="w-8 h-8 bg-[#121214] rounded-xl flex items-center justify-center border border-[#121214]">
@@ -116,7 +119,7 @@ export const UpcomingTab: React.FC<UpcomingTabProps> = ({
       </div>
 
       {/* Search & Filter Toolbar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#382c38]/15 shadow-xs">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-[#382c38]/20 shadow-md text-[#121214] transition-all duration-200">
         <div className="relative flex-1 max-w-xs">
           <Search className="w-3.5 h-3.5 text-[#8f7c60] absolute left-3 top-1/2 -translate-y-1/2" />
           <input

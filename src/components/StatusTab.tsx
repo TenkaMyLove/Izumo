@@ -6,6 +6,7 @@ import { AlertCircle, Clock, Calendar, CheckCircle2, ExternalLink, Edit3, CheckS
 interface StatusTabProps {
   items: AgendaItem[];
   simulatedDate?: string;
+  darkMode?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -14,10 +15,12 @@ interface StatusTabProps {
 export const StatusTab: React.FC<StatusTabProps> = ({
   items,
   simulatedDate,
+  darkMode,
   onToggleDone,
   onEditItem,
   onOpenLink,
 }) => {
+  const isDark = Boolean(darkMode);
   const todayStr = getTodayDateString(simulatedDate);
 
   const overdueItems: AgendaItem[] = [];
@@ -39,44 +42,49 @@ export const StatusTab: React.FC<StatusTabProps> = ({
   upcomingItems.sort(sortByDate);
   doneItems.sort(sortByDate);
 
-  const totalActive = overdueItems.length + dueTodayItems.length + upcomingItems.length;
-  const completionPct = items.length > 0 ? Math.round((doneItems.length / items.length) * 100) : 0;
-
   const statCards = [
     {
       label: 'Overdue',
       count: overdueItems.length,
       icon: <AlertCircle className="w-6 h-6" />,
-      bg: 'bg-[#851f22]/30',
-      border: overdueItems.length > 0 ? 'border-[#ff5555]' : 'border-[#851f22]/40',
-      text: 'text-[#ff6b6b]',
+      bg: isDark ? 'bg-[#851f22]/30' : 'bg-[#851f22]/10',
+      border: overdueItems.length > 0 
+        ? isDark ? 'border-[#ff5555]' : 'border-[#851f22]/40' 
+        : isDark ? 'border-[#851f22]/40' : 'border-[#851f22]/20',
+      text: isDark ? 'text-[#ff6b6b]' : 'text-[#851f22]',
+      subText: isDark ? 'text-[#ff6b6b]/70' : 'text-[#851f22]/70',
       pulse: overdueItems.length > 0,
     },
     {
       label: 'Due Today',
       count: dueTodayItems.length,
       icon: <Clock className="w-6 h-6" />,
-      bg: 'bg-[#efcc59]/20',
-      border: dueTodayItems.length > 0 ? 'border-[#efcc59]' : 'border-[#efcc59]/30',
-      text: 'text-[#efcc59]',
+      bg: isDark ? 'bg-[#efcc59]/20' : 'bg-[#efcc59]/20',
+      border: dueTodayItems.length > 0 
+        ? isDark ? 'border-[#efcc59]' : 'border-[#d4ab28]' 
+        : isDark ? 'border-[#efcc59]/30' : 'border-[#d4ab28]/30',
+      text: isDark ? 'text-[#efcc59]' : 'text-[#8a6d0b]',
+      subText: isDark ? 'text-[#efcc59]/70' : 'text-[#8a6d0b]/70',
       pulse: false,
     },
     {
       label: 'Upcoming',
       count: upcomingItems.length,
       icon: <Calendar className="w-6 h-6" />,
-      bg: 'bg-[#386641]/20',
-      border: 'border-[#386641]/50',
-      text: 'text-[#4ade80]',
+      bg: isDark ? 'bg-[#386641]/20' : 'bg-[#386641]/12',
+      border: isDark ? 'border-[#386641]/50' : 'border-[#386641]/30',
+      text: isDark ? 'text-[#4ade80]' : 'text-[#2d5a35]',
+      subText: isDark ? 'text-[#4ade80]/70' : 'text-[#2d5a35]/70',
       pulse: false,
     },
     {
       label: 'Completed',
       count: doneItems.length,
       icon: <CheckCircle2 className="w-6 h-6" />,
-      bg: 'bg-white/10',
-      border: 'border-white/20',
-      text: 'text-[#beb5a0]',
+      bg: isDark ? 'bg-[#1c1a1e]' : 'bg-white',
+      border: isDark ? 'border-[#382c38]' : 'border-[#382c38]/15 shadow-xs',
+      text: isDark ? 'text-[#faf1ec]' : 'text-[#121214]',
+      subText: isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]',
       pulse: false,
     },
   ];
@@ -94,7 +102,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({
               <span className={`text-[10px] font-extrabold uppercase tracking-widest ${card.text}`}>
                 {card.label}
               </span>
-              <span className={`${card.text} opacity-60 ${card.pulse ? 'animate-pulse' : ''}`}>
+              <span className={`${card.text} opacity-80 ${card.pulse ? 'animate-pulse' : ''}`}>
                 {card.icon}
               </span>
             </div>
@@ -102,7 +110,7 @@ export const StatusTab: React.FC<StatusTabProps> = ({
               <span className={`text-3xl font-black ${card.text} block leading-none`}>
                 {card.count}
               </span>
-              <span className="text-[10px] text-[#8f7c60] font-medium mt-0.5 block">
+              <span className={`text-[10px] font-medium mt-1 block ${card.subText}`}>
                 {card.count === 1 ? 'item' : 'items'}
               </span>
             </div>
@@ -110,18 +118,18 @@ export const StatusTab: React.FC<StatusTabProps> = ({
         ))}
       </div>
 
-
-
       {/* Status Sections */}
       <StatusSection
         title="Overdue"
         count={overdueItems.length}
-        colorClass="text-[#ff6b6b]"
-        borderAccent="border-l-[#ff5555]"
-        bgAccent="bg-[#851f22]/20"
-        icon={<AlertCircle className="w-4 h-4 text-[#ff6b6b]" />}
+        colorClass={isDark ? 'text-[#ff6b6b]' : 'text-[#851f22]'}
+        borderAccent="border-l-[#851f22]"
+        bgAccent={isDark ? 'bg-[#851f22]/30' : 'bg-[#851f22]/15'}
+        icon={<AlertCircle className={`w-4 h-4 ${isDark ? 'text-[#ff6b6b]' : 'text-[#851f22]'}`} />}
         items={overdueItems}
         todayStr={todayStr}
+        isDark={isDark}
+        isOverdueSection={true}
         onToggleDone={onToggleDone}
         onEditItem={onEditItem}
         onOpenLink={onOpenLink}
@@ -131,12 +139,13 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Due Today"
         count={dueTodayItems.length}
-        colorClass="text-[#efcc59]"
+        colorClass={isDark ? 'text-[#efcc59]' : 'text-[#8a6d0b]'}
         borderAccent="border-l-[#efcc59]"
-        bgAccent="bg-[#efcc59]/20"
-        icon={<Clock className="w-4 h-4 text-[#efcc59]" />}
+        bgAccent={isDark ? 'bg-[#efcc59]/20' : 'bg-[#efcc59]/20'}
+        icon={<Clock className={`w-4 h-4 ${isDark ? 'text-[#efcc59]' : 'text-[#8a6d0b]'}`} />}
         items={dueTodayItems}
         todayStr={todayStr}
+        isDark={isDark}
         onToggleDone={onToggleDone}
         onEditItem={onEditItem}
         onOpenLink={onOpenLink}
@@ -146,12 +155,13 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Upcoming"
         count={upcomingItems.length}
-        colorClass="text-[#386641]"
+        colorClass={isDark ? 'text-[#4ade80]' : 'text-[#2d5a35]'}
         borderAccent="border-l-[#386641]"
-        bgAccent="bg-[#386641]/5"
-        icon={<Calendar className="w-4 h-4 text-[#386641]" />}
+        bgAccent={isDark ? 'bg-[#386641]/20' : 'bg-[#386641]/12'}
+        icon={<Calendar className={`w-4 h-4 ${isDark ? 'text-[#4ade80]' : 'text-[#2d5a35]'}`} />}
         items={upcomingItems}
         todayStr={todayStr}
+        isDark={isDark}
         onToggleDone={onToggleDone}
         onEditItem={onEditItem}
         onOpenLink={onOpenLink}
@@ -161,12 +171,13 @@ export const StatusTab: React.FC<StatusTabProps> = ({
       <StatusSection
         title="Done Today"
         count={doneItems.length}
-        colorClass="text-[#8f7c60]"
+        colorClass={isDark ? 'text-[#a095a0]' : 'text-[#6b5e52]'}
         borderAccent="border-l-[#382c38]/40"
-        bgAccent="bg-[#f8f5ef]/50"
-        icon={<CheckCircle2 className="w-4 h-4 text-[#8f7c60]" />}
+        bgAccent={isDark ? 'bg-[#1c1a1e]' : 'bg-[#f8f5ef]'}
+        icon={<CheckCircle2 className={`w-4 h-4 ${isDark ? 'text-[#a095a0]' : 'text-[#6b5e52]'}`} />}
         items={doneItems}
         todayStr={todayStr}
+        isDark={isDark}
         onToggleDone={onToggleDone}
         onEditItem={onEditItem}
         onOpenLink={onOpenLink}
@@ -186,6 +197,8 @@ interface StatusSectionProps {
   icon: React.ReactNode;
   items: AgendaItem[];
   todayStr: string;
+  isDark: boolean;
+  isOverdueSection?: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
@@ -202,6 +215,8 @@ const StatusSection: React.FC<StatusSectionProps> = ({
   icon,
   items,
   todayStr,
+  isDark,
+  isOverdueSection,
   onToggleDone,
   onEditItem,
   onOpenLink,
@@ -217,16 +232,20 @@ const StatusSection: React.FC<StatusSectionProps> = ({
         <h4 className={`text-xs font-bold uppercase tracking-widest ${colorClass}`}>
           {title}
         </h4>
-        <span className="text-[10px] text-[#faf1ec] font-mono font-bold bg-[#121214] px-2 py-0.5 rounded-full border border-white/20">
+        <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${
+          isDark ? 'bg-[#121214] text-[#faf1ec] border border-[#382c38]' : 'bg-[#121214] text-[#faf1ec]'
+        }`}>
           {count}
         </span>
         {subNote && (
-          <span className="text-[10px] text-[#8f7c60] italic hidden sm:inline">· {subNote}</span>
+          <span className={`text-[10px] italic hidden sm:inline ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>· {subNote}</span>
         )}
       </div>
 
       {items.length === 0 ? (
-        <p className="text-xs text-[#8f7c60] italic py-1 pl-1 font-medium">{emptyMsg || 'No items.'}</p>
+        <p className={`text-xs italic py-1 pl-1 font-medium ${isDark ? 'text-[#a095a0]' : 'text-[#8f7c60]'}`}>
+          {emptyMsg || 'No items.'}
+        </p>
       ) : (
         <div className="space-y-1.5">
           {items.map((item) => {
@@ -236,7 +255,9 @@ const StatusSection: React.FC<StatusSectionProps> = ({
                 key={item.id}
                 className={`p-3 rounded-xl flex items-center justify-between gap-3 text-xs transition-all duration-150 shadow-xs group ${
                   item.isDone
-                    ? 'bg-[#faf1ec]/60 border-[#382c38]/15 opacity-60 text-[#121214]'
+                    ? isDark ? 'bg-[#1c1a1e] border-[#382c38]/40 text-[#a095a0] opacity-75' : 'bg-[#f8f5ef] border-[#382c38]/20 text-[#6b5e52] opacity-75'
+                    : isOverdueSection
+                    ? 'bg-[#f1f5b1] border-l-4 border-l-[#851f22] border-[#382c38]/25 text-[#121214] hover:bg-[#e6eba0]'
                     : 'bg-[#f1f5b1] border-[#382c38]/25 text-[#121214] hover:bg-[#e6eba0]'
                 }`}
               >
