@@ -57,8 +57,45 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
   const dueTodayItems = validItems.filter((i) => getItemStatus(i, todayStr) === 'Due Today');
   const progressPct = validItems.length > 0 ? Math.round((completedItems.length / validItems.length) * 100) : 0;
   
-  // Find "Up Next" item
-  const upNextItem = [...activeItems].sort((a, b) => a.dueDate.localeCompare(b.dueDate))[0];
+  // Category weight: Deadline & Other events take priority over Anime / Manhwa
+  const getCategoryPriority = (category: string) => {
+    switch (category) {
+      case 'Deadline': return 1;
+      case 'Other': return 2;
+      case 'Manhwa': return 3;
+      case 'Manga': return 3;
+      case 'Anime': return 4;
+      default: return 5;
+    }
+  };
+
+  // Priority algorithm for featured item in Today's Agenda Bento card:
+  // 1. Items Due Today (dueDate === todayStr)
+  // 2. Category Priority (Deadline > Other Events > Manhwa/Manga > Anime)
+  // 3. Upcoming items (dueDate >= todayStr) over past overdue items
+  // 4. Earliest due date
+  const upNextItem = [...activeItems].sort((a, b) => {
+    const isDueTodayA = a.dueDate === todayStr;
+    const isDueTodayB = b.dueDate === todayStr;
+
+    if (isDueTodayA !== isDueTodayB) {
+      return isDueTodayA ? -1 : 1;
+    }
+
+    const catPrioA = getCategoryPriority(a.category);
+    const catPrioB = getCategoryPriority(b.category);
+    if (catPrioA !== catPrioB) {
+      return catPrioA - catPrioB;
+    }
+
+    const isUpcomingA = a.dueDate >= todayStr;
+    const isUpcomingB = b.dueDate >= todayStr;
+    if (isUpcomingA !== isUpcomingB) {
+      return isUpcomingA ? -1 : 1;
+    }
+
+    return a.dueDate.localeCompare(b.dueDate);
+  })[0];
 
   // Filter items — Dashboard only shows today's items
   const filteredItems = validItems.filter((item) => {
@@ -143,8 +180,11 @@ export const DashboardMainTab: React.FC<DashboardMainTabProps> = ({
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#8f7c60] line-clamp-1 font-medium">
-                  {upNextItem.notes || `${formatFriendlyDate(upNextItem.dueDate, todayStr)} · Priority Item`}
+                <p className="text-xs text-[#8f7c60] line-clamp-1 font-medium flex items-center gap-1.5 flex-wrap">
+                  <span className="font-bold text-[#121214] bg-[#121214]/10 px-1.5 py-0.5 rounded font-mono text-[11px]">
+                    {formatFriendlyDate(upNextItem.dueDate, todayStr)} ({upNextItem.dueDate})
+                  </span>
+                  {upNextItem.notes && <span className="line-clamp-1">· {upNextItem.notes}</span>}
                 </p>
               </div>
             ) : (
