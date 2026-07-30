@@ -554,8 +554,12 @@ const MobileSettings: React.FC<{
             <span>Theme Mode</span>
           </div>
           <button
-            onClick={() => onUpdateSettings({ darkMode: !settings.darkMode })}
-            className={`w-10 h-5 rounded-full relative transition-colors ${
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              onUpdateSettings({ darkMode: !settings.darkMode });
+            }}
+            className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer ${
               settings.darkMode ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
             }`}
           >
@@ -579,8 +583,12 @@ const MobileSettings: React.FC<{
             <span>Startup Sound Cue</span>
           </div>
           <button
-            onClick={() => onUpdateSettings({ startupSoundEnabled: !settings.startupSoundEnabled })}
-            className={`w-10 h-5 rounded-full relative transition-colors ${
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              onUpdateSettings({ startupSoundEnabled: !settings.startupSoundEnabled });
+            }}
+            className={`w-10 h-5 rounded-full relative transition-colors cursor-pointer ${
               settings.startupSoundEnabled ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
             }`}
           >

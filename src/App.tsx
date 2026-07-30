@@ -748,6 +748,10 @@ export default function App() {
                 setEditingItem(null);
                 setIsAddModalOpen(true);
               }}
+              onUpdateSettings={handleUpdateSettings}
+              onTestSound={() => playStartupSound(settings.customSoundData)}
+              onResetDemoData={handleResetData}
+              onSimulateRollover={handleSimulateRollover}
               overdueCount={overdueCount}
               simulatedDate={settings.simulatedCurrentDate}
               isSyncing={isSyncing}
