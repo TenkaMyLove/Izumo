@@ -360,22 +360,39 @@ export default function App() {
 
   // Handler: Update Settings
   const handleUpdateSettings = async (newSettings: Partial<AppSettings>) => {
-    const updated = { ...settings, ...newSettings };
+    const oldCode = settings.syncCode;
+    const updatedCode = newSettings.syncCode
+      ? newSettings.syncCode.trim().toUpperCase()
+      : settings.syncCode;
+
     if (newSettings.syncCode) {
       try {
-        localStorage.setItem('izumo_sync_code', newSettings.syncCode);
+        localStorage.setItem('izumo_sync_code', updatedCode);
       } catch (e) {}
     }
+
+    const updated = { ...settings, ...newSettings, syncCode: updatedCode };
     setSettings(updated);
+
     try {
       await fetch('/api/settings', {
         method: 'POST',
-        headers: getApiHeaders(newSettings.syncCode),
-        body: JSON.stringify(newSettings),
+        headers: getApiHeaders(updatedCode),
+        body: JSON.stringify({ ...newSettings, syncCode: updatedCode }),
       });
-      if (newSettings.syncCode) {
-        fetchData();
+
+      // If user changed/generated a new code and has existing items, transfer current items to the new room
+      if (newSettings.syncCode && updatedCode !== oldCode && items.length > 0) {
+        for (const item of items) {
+          await fetch('/api/items', {
+            method: 'POST',
+            headers: getApiHeaders(updatedCode),
+            body: JSON.stringify(item),
+          });
+        }
       }
+
+      fetchData();
     } catch (e) {
       console.warn('API error updating settings:', e);
     }
