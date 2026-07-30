@@ -48,19 +48,54 @@ function saveStoredData(items: AgendaItem[], settings: AppSettings) {
   }
 }
 
-let { items: currentItems, settings: currentSettings } = loadStoredData();
+const storesByCode: Record<string, { items: AgendaItem[]; settings: AppSettings }> = {};
+
+function getSyncCodeFromReq(req: express.Request): string {
+  const headerCode = req.headers['x-sync-code'] || req.headers['x-sync-id'];
+  const queryCode = req.query?.code || req.query?.syncCode;
+  const bodyCode = req.body?.syncCode;
+  return (headerCode || queryCode || bodyCode || 'AG-9842').toString().trim().toUpperCase();
+}
+
+function getStoreForCode(syncCode: string) {
+  const normalized = (syncCode || 'AG-9842').toString().trim().toUpperCase();
+  if (!storesByCode[normalized]) {
+    if (normalized === 'AG-9842') {
+      const loaded = loadStoredData();
+      storesByCode[normalized] = loaded;
+    } else {
+      const initial = getInitialSeedData();
+      initial.settings.syncCode = normalized;
+      storesByCode[normalized] = initial;
+    }
+  }
+  return storesByCode[normalized];
+}
 
 async function startServer() {
   const app = express();
   app.use(express.json({ limit: '10mb' }));
 
+  // Middleware to attach store
+  app.use((req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type,x-sync-code,x-sync-id');
+    next();
+  });
+
   // API Routes
   app.get('/api/health', (req, res) => {
-    res.json({ status: 'ok', time: new Date().toISOString() });
+    const syncCode = getSyncCodeFromReq(req);
+    res.json({ status: 'ok', syncCode, time: new Date().toISOString() });
   });
 
   // Get all data
   app.get('/api/data', (req, res) => {
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
+    let { items: currentItems, settings: currentSettings } = store;
+
     const todayStr = getTodayDateString();
     if (!currentSettings.simulatedCurrentDate || currentSettings.simulatedCurrentDate <= todayStr) {
       currentSettings.simulatedCurrentDate = todayStr;
@@ -68,7 +103,8 @@ async function startServer() {
     const activeTodayStr = getTodayDateString(currentSettings.simulatedCurrentDate);
     const beforeCount = currentItems.length;
     currentItems = currentItems.filter((item) => !isDoneItemExpired(item, activeTodayStr));
-    if (beforeCount !== currentItems.length) {
+    store.items = currentItems;
+    if (beforeCount !== currentItems.length && syncCode === 'AG-9842') {
       saveStoredData(currentItems, currentSettings);
     }
     res.json({ items: currentItems, settings: currentSettings });
@@ -76,56 +112,65 @@ async function startServer() {
 
   // Add item
   app.post('/api/items', (req, res) => {
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
     const newItem: AgendaItem = {
       ...req.body,
       id: req.body.id || `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     };
-    currentItems.unshift(newItem);
-    currentSettings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    saveStoredData(currentItems, currentSettings);
-    res.json({ success: true, item: newItem, settings: currentSettings });
+    store.items.unshift(newItem);
+    store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    res.json({ success: true, item: newItem, settings: store.settings });
   });
 
   // Update item
   app.put('/api/items/:id', (req, res) => {
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
     const { id } = req.params;
-    const index = currentItems.findIndex((item) => item.id === id);
+    const index = store.items.findIndex((item) => item.id === id);
     if (index === -1) {
       res.status(404).json({ error: 'Item not found' });
       return;
     }
 
-    currentItems[index] = {
-      ...currentItems[index],
+    store.items[index] = {
+      ...store.items[index],
       ...req.body,
       updatedAt: new Date().toISOString(),
     };
 
-    currentSettings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    saveStoredData(currentItems, currentSettings);
-    res.json({ success: true, item: currentItems[index], settings: currentSettings });
+    store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    res.json({ success: true, item: store.items[index], settings: store.settings });
   });
 
   // Delete item
   app.delete('/api/items/:id', (req, res) => {
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
     const { id } = req.params;
-    currentItems = currentItems.filter((item) => item.id !== id);
-    currentSettings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    saveStoredData(currentItems, currentSettings);
-    res.json({ success: true, id, settings: currentSettings });
+    store.items = store.items.filter((item) => item.id !== id);
+    store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    res.json({ success: true, id, settings: store.settings });
   });
 
   // Update Settings
   app.post('/api/settings', (req, res) => {
-    currentSettings = {
-      ...currentSettings,
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
+    store.settings = {
+      ...store.settings,
       ...req.body,
+      syncCode,
       lastSyncTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    saveStoredData(currentItems, currentSettings);
-    res.json({ success: true, settings: currentSettings });
+    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    res.json({ success: true, settings: store.settings });
   });
 
   // Perform Day Rollover (PRD 4.5)

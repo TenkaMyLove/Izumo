@@ -248,10 +248,14 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             Enter this code into your phone app to sync your agenda across devices in real time.
           </p>
 
-          <div className="flex items-center gap-3">
-            <div className="bg-[#121214] border border-[#121214] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs">
-              {settings.syncCode}
-            </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <input
+              type="text"
+              value={settings.syncCode || ''}
+              onChange={(e) => onUpdateSettings({ syncCode: e.target.value.toUpperCase() })}
+              placeholder="AG-9842"
+              className="bg-[#121214] border border-[#121214] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs focus:outline-none focus:ring-2 focus:ring-[#efcc59] uppercase w-44"
+            />
 
             <button
               onClick={handleCopyCode}
@@ -259,6 +263,16 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
             >
               {copiedCode ? <Check className="w-3.5 h-3.5 text-[#4ade80]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#8f7c60]" />}
               <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
+            </button>
+
+            <button
+              onClick={() => {
+                const newCode = `AG-${Math.floor(1000 + Math.random() * 9000)}`;
+                onUpdateSettings({ syncCode: newCode });
+              }}
+              className="px-3.5 py-2 rounded-2xl border font-bold text-xs bg-[#efcc59]/20 text-[#121214] border-[#efcc59]/50 hover:bg-[#efcc59]/30 transition"
+            >
+              Generate New Code
             </button>
           </div>
         </div>

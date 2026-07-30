@@ -56,11 +56,25 @@ export default function App() {
     pos: { x: 0, y: 0 },
   });
 
+  const getApiHeaders = useCallback((codeOverride?: string) => {
+    const code =
+      codeOverride ||
+      settings.syncCode ||
+      (typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sync_code') : null) ||
+      'AG-9842';
+    return {
+      'Content-Type': 'application/json',
+      'x-sync-code': code,
+    };
+  }, [settings.syncCode]);
+
   // Fetch data from server
   const fetchData = useCallback(async () => {
     try {
       setIsSyncing(true);
-      const res = await fetch('/api/data');
+      const res = await fetch('/api/data', {
+        headers: getApiHeaders(),
+      });
       if (res.ok) {
         const data = await res.json();
         const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
@@ -74,6 +88,9 @@ export default function App() {
         try {
           localStorage.setItem('izumo_auto_backup_items', JSON.stringify(cleanItems));
           localStorage.setItem('izumo_auto_backup_settings', JSON.stringify(data.settings || {}));
+          if (data.settings?.syncCode) {
+            localStorage.setItem('izumo_sync_code', data.settings.syncCode);
+          }
         } catch (e) {}
 
         // If running in Electron desktop app, backup directly to local disk e:\Izumo\data\agenda.json
@@ -92,7 +109,7 @@ export default function App() {
     } finally {
       setIsSyncing(false);
     }
-  }, []);
+  }, [getApiHeaders]);
 
   // Initial load & Polling for live sync between Desktop & Mobile
   useEffect(() => {
@@ -143,7 +160,7 @@ export default function App() {
       try {
         const res = await fetch(`/api/items/${itemData.id}`, {
           method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getApiHeaders(),
           body: JSON.stringify(itemData),
         });
         if (res.ok) {
@@ -166,7 +183,7 @@ export default function App() {
       try {
         const res = await fetch('/api/items', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: getApiHeaders(),
           body: JSON.stringify({
             ...itemData,
             isDone: false,
@@ -215,7 +232,7 @@ export default function App() {
     try {
       await fetch(`/api/items/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({ isDone: nextDone, doneAt }),
       });
     } catch (e) {
@@ -240,7 +257,7 @@ export default function App() {
     try {
       await fetch(`/api/items/${id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({ isWatched: nextWatched }),
       });
     } catch (e) {
@@ -261,7 +278,10 @@ export default function App() {
     setItems((prev) => prev.filter((item) => item.id !== id));
 
     try {
-      await fetch(`/api/items/${id}`, { method: 'DELETE' });
+      await fetch(`/api/items/${id}`, {
+        method: 'DELETE',
+        headers: getApiHeaders(),
+      });
     } catch (e) {
       console.warn('API error deleting item:', e);
     }
@@ -283,7 +303,7 @@ export default function App() {
     try {
       const res = await fetch('/api/rollover', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(),
         body: JSON.stringify({ simulatedDate: nextDayStr }),
       });
       if (res.ok) {
@@ -312,13 +332,21 @@ export default function App() {
   // Handler: Update Settings
   const handleUpdateSettings = async (newSettings: Partial<AppSettings>) => {
     const updated = { ...settings, ...newSettings };
+    if (newSettings.syncCode) {
+      try {
+        localStorage.setItem('izumo_sync_code', newSettings.syncCode);
+      } catch (e) {}
+    }
     setSettings(updated);
     try {
       await fetch('/api/settings', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getApiHeaders(newSettings.syncCode),
         body: JSON.stringify(newSettings),
       });
+      if (newSettings.syncCode) {
+        fetchData();
+      }
     } catch (e) {
       console.warn('API error updating settings:', e);
     }
@@ -329,7 +357,10 @@ export default function App() {
     if (confirm('Reset agenda data to initial PRD seed state?')) {
       setIsSyncing(true);
       try {
-        const res = await fetch('/api/reset', { method: 'POST' });
+        const res = await fetch('/api/reset', {
+          method: 'POST',
+          headers: getApiHeaders(),
+        });
         if (res.ok) {
           const data = await res.json();
           setItems(data.items);

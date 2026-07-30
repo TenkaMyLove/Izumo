@@ -1,49 +1,65 @@
 import fs from 'fs';
 import path from 'path';
 
-// Memory fallback store for Vercel Serverless Function environment
-let memoryStore: any = null;
+// Memory store dictionary per syncCode (multi-tenant room isolation)
+const storesByCode: Record<string, { items: any[]; settings: any }> = {};
 
-function getAgendaData() {
-  if (memoryStore) return memoryStore;
-  const filePath = path.join(process.cwd(), 'data', 'agenda.json');
-  if (fs.existsSync(filePath)) {
-    try {
-      const content = fs.readFileSync(filePath, 'utf-8');
-      memoryStore = JSON.parse(content);
-      return memoryStore;
-    } catch (e) {
-      console.error('Error reading agenda.json:', e);
+function extractSyncCode(req: any): string {
+  const headerCode = req.headers?.['x-sync-code'] || req.headers?.['x-sync-id'];
+  const queryCode = req.query?.code || req.query?.syncCode;
+  const bodyCode = req.body?.syncCode;
+  return (headerCode || queryCode || bodyCode || 'AG-9842').toString().trim().toUpperCase();
+}
+
+function getStoreForCode(syncCode: string) {
+  const normalized = (syncCode || 'AG-9842').toString().trim().toUpperCase();
+  if (!storesByCode[normalized]) {
+    const filePath = path.join(process.cwd(), 'data', 'agenda.json');
+    if (normalized === 'AG-9842' && fs.existsSync(filePath)) {
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const parsed = JSON.parse(content);
+        storesByCode[normalized] = {
+          items: parsed.items || [],
+          settings: { ...(parsed.settings || {}), syncCode: 'AG-9842' },
+        };
+        return storesByCode[normalized];
+      } catch (e) {
+        console.error('Error reading agenda.json:', e);
+      }
     }
+
+    storesByCode[normalized] = {
+      items: [],
+      settings: {
+        soundEnabled: true,
+        volume: 0.8,
+        syncCode: normalized,
+        simulatedCurrentDate: new Date().toISOString().split('T')[0],
+        customSoundData: null,
+      },
+    };
   }
-  return {
-    items: [],
-    settings: {
-      soundEnabled: true,
-      volume: 0.8,
-      syncCode: 'AG-9842',
-      simulatedCurrentDate: new Date().toISOString().split('T')[0],
-      customSoundData: null,
-    },
-  };
+  return storesByCode[normalized];
 }
 
 export default function handler(req: any, res: any) {
   // Enable CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type,x-sync-code,x-sync-id');
 
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
   const { url = '', method = 'GET' } = req;
-  const data = getAgendaData();
+  const syncCode = extractSyncCode(req);
+  const data = getStoreForCode(syncCode);
 
   // GET /api/health
   if (url.includes('/api/health') && method === 'GET') {
-    return res.status(200).json({ status: 'ok', time: new Date().toISOString() });
+    return res.status(200).json({ status: 'ok', syncCode, time: new Date().toISOString() });
   }
 
   // GET /api/data
@@ -101,7 +117,7 @@ export default function handler(req: any, res: any) {
 
   // POST /api/settings
   if (url.includes('/api/settings') && method === 'POST') {
-    data.settings = { ...data.settings, ...(req.body || {}) };
+    data.settings = { ...data.settings, ...(req.body || {}), syncCode };
     return res.status(200).json({ success: true, settings: data.settings });
   }
 
@@ -123,17 +139,8 @@ export default function handler(req: any, res: any) {
 
   // POST /api/reset
   if (url.includes('/api/reset') && method === 'POST') {
-    const filePath = path.join(process.cwd(), 'data', 'agenda.json');
-    if (fs.existsSync(filePath)) {
-      try {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        memoryStore = JSON.parse(content);
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    const freshData = getAgendaData();
-    return res.status(200).json({ success: true, items: freshData.items || [], settings: freshData.settings });
+    const fresh = getStoreForCode(syncCode);
+    return res.status(200).json({ success: true, items: fresh.items || [], settings: fresh.settings });
   }
 
   return res.status(200).json(data);

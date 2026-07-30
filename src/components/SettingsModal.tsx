@@ -221,17 +221,31 @@ export const SettingsModal: React.FC<SettingsModalProps> = ({
               Use this code on your mobile companion app to sync agenda items in real time.
             </p>
 
-            <div className="flex items-center gap-3">
-              <div className="bg-[#121214] border border-[#382c38] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs">
-                {settings.syncCode}
-              </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <input
+                type="text"
+                value={settings.syncCode || ''}
+                onChange={(e) => onUpdateSettings({ syncCode: e.target.value.toUpperCase() })}
+                placeholder="AG-9842"
+                className="bg-[#121214] border border-[#382c38] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs focus:outline-none focus:ring-2 focus:ring-[#efcc59] uppercase w-44"
+              />
 
               <button
                 onClick={handleCopyCode}
-                className="px-3.5 py-2 bg-[#f8f5ef] hover:bg-[#faf1ec] text-[#121214] rounded-2xl border border-[#382c38]/30 font-bold transition flex items-center gap-1.5 shadow-xs"
+                className="px-3.5 py-2 bg-[#f8f5ef] hover:bg-[#faf1ec] text-[#121214] rounded-2xl border border-[#382c38]/30 font-bold transition flex items-center gap-1.5 shadow-xs text-xs"
               >
                 {copiedCode ? <Check className="w-3.5 h-3.5 text-[#386641]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#8f7c60]" />}
-                <span>{copiedCode ? 'Copied Code!' : 'Copy Code'}</span>
+                <span>{copiedCode ? 'Copied!' : 'Copy'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const newCode = `AG-${Math.floor(1000 + Math.random() * 9000)}`;
+                  onUpdateSettings({ syncCode: newCode });
+                }}
+                className="px-3.5 py-2 rounded-2xl border font-bold text-xs bg-[#efcc59]/20 text-[#121214] border-[#efcc59]/50 hover:bg-[#efcc59]/30 transition"
+              >
+                New Code
               </button>
             </div>
           </div>
