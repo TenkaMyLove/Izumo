@@ -1,6 +1,71 @@
 {
   "items": [
     {
+      "title": "Clevatess Season 2 Ep 4",
+      "category": "Anime",
+      "dueDate": "2026-07-30",
+      "recurrence": "weekly",
+      "notes": "Musim ke dua dari Anime Clevatess",
+      "link": "https://v2.samehadaku.how/anime/clevatess-season-2/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1785389843923-l5tn",
+      "createdAt": "2026-07-30T05:37:23.923Z",
+      "updatedAt": "2026-07-30T05:37:23.923Z"
+    },
+    {
+      "title": "Youjo Senki Ep 4",
+      "category": "Anime",
+      "dueDate": "2026-07-30",
+      "recurrence": "weekly",
+      "notes": "Season kedua dari series Youjo Senki",
+      "link": "https://v2.samehadaku.how/anime/youjo-senki-ii/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1785389802457-uf5r",
+      "createdAt": "2026-07-30T05:36:42.457Z",
+      "updatedAt": "2026-07-30T05:36:42.457Z"
+    },
+    {
+      "title": "Otome Game Sekai Wa Mob Season 2 Ep 4",
+      "category": "Anime",
+      "dueDate": "2026-07-30",
+      "recurrence": "weekly",
+      "notes": "Musim Ke-2 dari anime Otome Game Sekai wa Mob",
+      "link": "https://v2.samehadaku.how/anime/otome-game-sekai-wa-mob-season-2/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1785389730284-omvv",
+      "createdAt": "2026-07-30T05:35:30.284Z",
+      "updatedAt": "2026-07-30T05:35:30.284Z"
+    },
+    {
+      "title": "Lvl 999 Murabito Ep 6",
+      "category": "Anime",
+      "dueDate": "2026-07-30",
+      "recurrence": "weekly",
+      "notes": "Bagi seorang Warga Desa yang tidak memiliki kekuatan, pergi memburu monster sama saja seperti bunuh diri. Namun, suatu hari, seorang anak berusia dua tahun yang dianugerahi peran Warga Desa menyadari sebuah fakta.\n\nSetiap kali mengalahkan monster, seseorang bisa memperoleh kekayaan yang luar biasa.",
+      "link": "https://v2.samehadaku.how/anime/lv999-no-murabito/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1785389685123-fs1k",
+      "createdAt": "2026-07-30T05:34:45.123Z",
+      "updatedAt": "2026-07-30T05:35:57.429Z"
+    },
+    {
+      "title": "Tomb Raider King Ep 4",
+      "category": "Anime",
+      "dueDate": "2026-07-30",
+      "recurrence": "weekly",
+      "notes": "Menyamar di balik garis musuh, rencana terbaru Jooheon untuk menyiksa TKBM akan melibatkan upaya menjatuhkan mereka dari dalam! Mencuri relik-relik mereka dan memicu perselisihan internal hanyalah puncak gunung es dari apa yang akan dilakukannya untuk membuat kelompok itu membayar dosa-dosa mereka. Namun, dengan kemunculan Menara Kebanggaan, kemampuan Jooheon dalam memancing amarah akan benar-benar diuji saat ia harus mempertemukan para panglima perang paling menakutkan satu sama lain! Akankah Jooheon Suh keluar sebagai pemenang dalam pertempuran para penakluk terbesar dalam sejarah?",
+      "link": "https://v2.samehadaku.how/anime/dogulwang/",
+      "isDone": false,
+      "isWatched": false,
+      "id": "item-1785389553828-n2p3",
+      "createdAt": "2026-07-30T05:32:33.829Z",
+      "updatedAt": "2026-07-30T05:35:41.543Z"
+    },
+    {
       "title": "Koko wa Ore ni Makasete Saki ni Ike to Itte kara 10-nen ga Tattara Densetsu ni Natteita Ep 5",
       "category": "Anime",
       "dueDate": "2026-08-01",
@@ -151,9 +216,9 @@
     "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
     "syncCode": "AG-9842",
-    "lastSyncTime": "10.24",
+    "lastSyncTime": "13.37",
     "simulatedCurrentDate": "2026-07-30",
     "darkMode": false
   },
-  "updatedAt": "2026-07-30T02:24:26.737Z"
+  "updatedAt": "2026-07-30T05:37:23.923Z"
 }
