@@ -36,7 +36,14 @@ export default function App() {
   const [settings, setSettings] = useState<AppSettings>(() => {
     const seedSettings = getInitialSeedData().settings;
     const initialCode = getInitialSyncCode();
-    return { ...seedSettings, syncCode: initialCode };
+    const savedDark = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_dark_mode') : null;
+    const savedSound = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sound_enabled') : null;
+    return {
+      ...seedSettings,
+      syncCode: initialCode,
+      darkMode: savedDark !== null ? savedDark === 'true' : seedSettings.darkMode,
+      startupSoundEnabled: savedSound !== null ? savedSound === 'true' : seedSettings.startupSoundEnabled,
+    };
   });
   // Auto-detect viewMode: Default to 'mobile' on mobile devices, 'desktop' for actual desktop window app
   const [viewMode, setViewMode] = useState<ViewMode>(() => {
@@ -104,10 +111,15 @@ export default function App() {
           settings.syncCode ||
           'XX-1234';
 
-        setSettings({
+        const savedDarkMode = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_dark_mode') : null;
+        const savedSound = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sound_enabled') : null;
+
+        setSettings((prev) => ({
           ...(data.settings || getInitialSeedData().settings),
+          darkMode: savedDarkMode !== null ? savedDarkMode === 'true' : (data.settings?.darkMode ?? prev.darkMode),
+          startupSoundEnabled: savedSound !== null ? savedSound === 'true' : (data.settings?.startupSoundEnabled ?? prev.startupSoundEnabled),
           syncCode: currentCode,
-        });
+        }));
 
         // Auto-backup to localStorage in case Vercel is unreachable
         try {
@@ -383,16 +395,26 @@ export default function App() {
 
   // Handler: Update Settings
   const handleUpdateSettings = async (newSettings: Partial<AppSettings>) => {
+    if (typeof newSettings.darkMode !== 'undefined') {
+      try {
+        localStorage.setItem('izumo_dark_mode', String(newSettings.darkMode));
+      } catch (e) {}
+    }
+    if (typeof newSettings.startupSoundEnabled !== 'undefined') {
+      try {
+        localStorage.setItem('izumo_sound_enabled', String(newSettings.startupSoundEnabled));
+      } catch (e) {}
+    }
+    if (newSettings.syncCode) {
+      try {
+        localStorage.setItem('izumo_sync_code', newSettings.syncCode.trim().toUpperCase());
+      } catch (e) {}
+    }
+
     const oldCode = settings.syncCode;
     const updatedCode = newSettings.syncCode
       ? newSettings.syncCode.trim().toUpperCase()
       : settings.syncCode;
-
-    if (newSettings.syncCode) {
-      try {
-        localStorage.setItem('izumo_sync_code', updatedCode);
-      } catch (e) {}
-    }
 
     const updated = { ...settings, ...newSettings, syncCode: updatedCode };
     setSettings(updated);

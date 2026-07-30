@@ -500,29 +500,47 @@ const MobileSettings: React.FC<{
           <input
             type="text"
             value={inputCode}
-            onChange={handleInputChange}
+            onChange={(e) => setInputCode(e.target.value.toUpperCase())}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && inputCode.trim()) {
+                onUpdateSettings({ syncCode: inputCode.trim() });
+              }
+            }}
             placeholder="XX-1234"
             className="w-full p-2.5 bg-[#121214] text-[#f1f5b1] font-mono font-black text-center rounded-xl text-lg border border-[#382c38]/40 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#efcc59]"
           />
 
-          <div className="flex items-center gap-2 pt-1">
+          <div className="grid grid-cols-3 gap-1.5 pt-1">
+            <button
+              onClick={() => {
+                if (inputCode.trim()) {
+                  onUpdateSettings({ syncCode: inputCode.trim() });
+                }
+              }}
+              className="py-2 bg-[#386641] hover:bg-[#2d5234] text-white rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>Apply</span>
+            </button>
+
             <button
               onClick={handleCopyCode}
-              className="flex-1 py-2 bg-[#f8f5ef]/10 hover:bg-[#faf1ec]/20 border border-[#382c38]/30 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
+              className="py-2 bg-[#f8f5ef]/10 hover:bg-[#faf1ec]/20 border border-[#382c38]/30 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
             >
               {copiedCode ? <Check className="w-3.5 h-3.5 text-[#386641]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#8f7c60]" />}
-              <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
+              <span>{copiedCode ? 'Copied' : 'Copy'}</span>
             </button>
 
             <button
               onClick={() => {
                 const newCode = `IZ-${Math.floor(1000 + Math.random() * 9000)}`;
+                setInputCode(newCode);
                 onUpdateSettings({ syncCode: newCode });
               }}
-              className="flex-1 py-2 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-current border border-[#efcc59]/50 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
+              className="py-2 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-current border border-[#efcc59]/50 rounded-xl font-bold text-[11px] flex items-center justify-center gap-1 transition"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>New Code</span>
+              <span>New</span>
             </button>
           </div>
         </div>
