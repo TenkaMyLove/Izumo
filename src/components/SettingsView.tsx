@@ -59,7 +59,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
     : 'bg-white border-[#382c38]/15 text-[#121214] shadow-xs';
 
   return (
-    <div className="space-y-6 max-w-4xl animate-slide-in-up">
+    <div className="space-y-6 w-full max-w-5xl mx-auto animate-slide-in-up">
       {/* Tab Header Banner */}
       <div className={`p-5 rounded-3xl border flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 transition-all duration-200 ${cardBgClass}`}>
         <div>
