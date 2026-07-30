@@ -28,6 +28,19 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
   onResetDemoData,
 }) => {
   const [copiedCode, setCopiedCode] = useState(false);
+  const [inputCode, setInputCode] = useState(settings.syncCode || '');
+
+  React.useEffect(() => {
+    setInputCode(settings.syncCode || '');
+  }, [settings.syncCode]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toUpperCase();
+    setInputCode(val);
+    if (val.trim()) {
+      onUpdateSettings({ syncCode: val.trim() });
+    }
+  };
 
   const isDark = Boolean(settings.darkMode);
 
@@ -251,8 +264,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <div className="flex flex-wrap items-center gap-3">
             <input
               type="text"
-              value={settings.syncCode || ''}
-              onChange={(e) => onUpdateSettings({ syncCode: e.target.value.toUpperCase() })}
+              value={inputCode}
+              onChange={handleInputChange}
               placeholder="AG-9842"
               className="bg-[#121214] border border-[#121214] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs focus:outline-none focus:ring-2 focus:ring-[#efcc59] uppercase w-44"
             />

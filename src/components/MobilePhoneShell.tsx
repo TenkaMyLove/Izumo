@@ -71,7 +71,7 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
   const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
   return (
-    <div className="w-full max-w-md md:max-w-[380px] mx-auto bg-[#faf1ec] text-[#121214] sm:rounded-[44px] p-3 sm:shadow-2xl shadow-black/40 sm:border-[3px] border-[#121214] sm:ring-4 ring-[#382c38]/20 flex flex-col relative min-h-screen sm:min-h-[740px] select-none">
+    <div className="w-full max-w-md md:max-w-[380px] mx-auto bg-[#faf1ec] text-[#121214] sm:rounded-[44px] p-3 sm:shadow-2xl shadow-black/40 sm:border-[3px] border-[#121214] sm:ring-4 ring-[#382c38]/20 flex flex-col relative min-h-screen sm:min-h-[740px]">
       {/* Dynamic Island (hidden on real mobile screens) */}
       <div className="hidden sm:flex w-28 h-[18px] bg-[#121214] rounded-full mx-auto mb-2 items-center justify-center gap-2 z-20 border border-[#382c38]/30">
         <span className="w-2.5 h-2.5 rounded-full bg-[#382c38]" />
@@ -437,6 +437,19 @@ const MobileSettings: React.FC<{
   onSimulateRollover?: () => void;
 }> = ({ settings, onUpdateSettings, onTestSound, onResetDemoData, onSimulateRollover }) => {
   const [copiedCode, setCopiedCode] = React.useState(false);
+  const [inputCode, setInputCode] = React.useState(settings.syncCode || '');
+
+  React.useEffect(() => {
+    setInputCode(settings.syncCode || '');
+  }, [settings.syncCode]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value.toUpperCase();
+    setInputCode(val);
+    if (val.trim()) {
+      onUpdateSettings({ syncCode: val.trim() });
+    }
+  };
 
   const handleCopyCode = () => {
     navigator.clipboard.writeText(settings.syncCode);
@@ -483,8 +496,8 @@ const MobileSettings: React.FC<{
         <div className="space-y-2">
           <input
             type="text"
-            value={settings.syncCode || ''}
-            onChange={(e) => onUpdateSettings({ syncCode: e.target.value.toUpperCase() })}
+            value={inputCode}
+            onChange={handleInputChange}
             placeholder="AG-9842"
             className="w-full p-2.5 bg-[#121214] text-[#f1f5b1] font-mono font-black text-center rounded-xl text-lg border border-[#382c38]/40 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#efcc59]"
           />
