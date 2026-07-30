@@ -111,7 +111,7 @@ export function getInitialSeedData(): { items: AgendaItem[]; settings: AppSettin
     startupSoundEnabled: true,
     customSoundName: 'Izumo Startup Sound Cue (Tenka.mp3)',
     autoStartWindows: true,
-    syncCode: 'AG-9842',
+    syncCode: 'XX-1234',
     lastSyncTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     simulatedCurrentDate: todayStr,
   };

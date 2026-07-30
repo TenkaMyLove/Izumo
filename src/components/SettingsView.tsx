@@ -266,7 +266,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               type="text"
               value={inputCode}
               onChange={handleInputChange}
-              placeholder="AG-9842"
+              placeholder="XX-1234"
               className="bg-[#121214] border border-[#121214] px-4 py-2 rounded-2xl text-lg font-mono font-black text-[#f1f5b1] tracking-wider shadow-xs focus:outline-none focus:ring-2 focus:ring-[#efcc59] uppercase w-44"
             />
 

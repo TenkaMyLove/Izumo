@@ -54,13 +54,13 @@ function getSyncCodeFromReq(req: express.Request): string {
   const headerCode = req.headers['x-sync-code'] || req.headers['x-sync-id'];
   const queryCode = req.query?.code || req.query?.syncCode;
   const bodyCode = req.body?.syncCode;
-  return (headerCode || queryCode || bodyCode || 'AG-9842').toString().trim().toUpperCase();
+  return (headerCode || queryCode || bodyCode || 'XX-1234').toString().trim().toUpperCase();
 }
 
 function getStoreForCode(syncCode: string) {
-  const normalized = (syncCode || 'AG-9842').toString().trim().toUpperCase();
+  const normalized = (syncCode || 'XX-1234').toString().trim().toUpperCase();
   if (!storesByCode[normalized]) {
-    if (normalized === 'AG-9842') {
+    if (normalized === 'XX-1234') {
       const loaded = loadStoredData();
       storesByCode[normalized] = loaded;
     } else {
@@ -104,7 +104,7 @@ async function startServer() {
     const beforeCount = currentItems.length;
     currentItems = currentItems.filter((item) => !isDoneItemExpired(item, activeTodayStr));
     store.items = currentItems;
-    if (beforeCount !== currentItems.length && syncCode === 'AG-9842') {
+    if (beforeCount !== currentItems.length && syncCode === 'XX-1234') {
       saveStoredData(currentItems, currentSettings);
     }
     res.json({ items: currentItems, settings: currentSettings });
@@ -122,7 +122,7 @@ async function startServer() {
     };
     store.items.unshift(newItem);
     store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
     res.json({ success: true, item: newItem, settings: store.settings });
   });
 
@@ -144,7 +144,7 @@ async function startServer() {
     };
 
     store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
     res.json({ success: true, item: store.items[index], settings: store.settings });
   });
 
@@ -155,7 +155,7 @@ async function startServer() {
     const { id } = req.params;
     store.items = store.items.filter((item) => item.id !== id);
     store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
     res.json({ success: true, id, settings: store.settings });
   });
 
@@ -169,7 +169,7 @@ async function startServer() {
       syncCode,
       lastSyncTime: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
-    if (syncCode === 'AG-9842') saveStoredData(store.items, store.settings);
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
     res.json({ success: true, settings: store.settings });
   });
 

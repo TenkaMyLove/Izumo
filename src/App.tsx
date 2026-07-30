@@ -77,7 +77,7 @@ export default function App() {
       codeOverride ||
       settings.syncCode ||
       (typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sync_code') : null) ||
-      'AG-9842';
+      'XX-1234';
     return {
       'Content-Type': 'application/json',
       'x-sync-code': code,
@@ -102,7 +102,7 @@ export default function App() {
         const currentCode =
           (typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sync_code') : null) ||
           settings.syncCode ||
-          'AG-9842';
+          'XX-1234';
 
         setSettings({
           ...(data.settings || getInitialSeedData().settings),
@@ -147,12 +147,35 @@ export default function App() {
     return () => clearInterval(interval);
   }, [fetchData]);
 
-  // Play startup sound on initial boot if enabled (PRD 4.9)
+  // Play startup sound on initial boot or first user gesture on PWA/Web
+  const hasPlayedStartupSound = useRef(false);
   useEffect(() => {
-    if (settings.startupSoundEnabled) {
-      playStartupSound(settings.customSoundData);
+    const handleGesturePlay = () => {
+      if (settings.startupSoundEnabled && !hasPlayedStartupSound.current) {
+        hasPlayedStartupSound.current = true;
+        playStartupSound(settings.customSoundData);
+      }
+      window.removeEventListener('click', handleGesturePlay);
+      window.removeEventListener('touchstart', handleGesturePlay);
+      window.removeEventListener('keydown', handleGesturePlay);
+    };
+
+    if (settings.startupSoundEnabled && !hasPlayedStartupSound.current) {
+      playStartupSound(settings.customSoundData).then(() => {
+        hasPlayedStartupSound.current = true;
+      }).catch(() => {});
+
+      window.addEventListener('click', handleGesturePlay);
+      window.addEventListener('touchstart', handleGesturePlay);
+      window.addEventListener('keydown', handleGesturePlay);
     }
-  }, []); // Run once on startup
+
+    return () => {
+      window.removeEventListener('click', handleGesturePlay);
+      window.removeEventListener('touchstart', handleGesturePlay);
+      window.removeEventListener('keydown', handleGesturePlay);
+    };
+  }, [settings.startupSoundEnabled, settings.customSoundData]);
 
   // Helper: Auto-schedule next occurrence when an item with recurrence is completed/watched
   const scheduleNextOccurrence = async (item: AgendaItem) => {

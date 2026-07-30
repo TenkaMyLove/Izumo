@@ -8,20 +8,20 @@ function extractSyncCode(req: any): string {
   const headerCode = req.headers?.['x-sync-code'] || req.headers?.['x-sync-id'];
   const queryCode = req.query?.code || req.query?.syncCode;
   const bodyCode = req.body?.syncCode;
-  return (headerCode || queryCode || bodyCode || 'AG-9842').toString().trim().toUpperCase();
+  return (headerCode || queryCode || bodyCode || 'XX-1234').toString().trim().toUpperCase();
 }
 
 function getStoreForCode(syncCode: string) {
-  const normalized = (syncCode || 'AG-9842').toString().trim().toUpperCase();
+  const normalized = (syncCode || 'XX-1234').toString().trim().toUpperCase();
   if (!storesByCode[normalized]) {
     const filePath = path.join(process.cwd(), 'data', 'agenda.json');
-    if (normalized === 'AG-9842' && fs.existsSync(filePath)) {
+    if (normalized === 'XX-1234' && fs.existsSync(filePath)) {
       try {
         const content = fs.readFileSync(filePath, 'utf-8');
         const parsed = JSON.parse(content);
         storesByCode[normalized] = {
           items: parsed.items || [],
-          settings: { ...(parsed.settings || {}), syncCode: 'AG-9842' },
+          settings: { ...(parsed.settings || {}), syncCode: 'XX-1234' },
         };
         return storesByCode[normalized];
       } catch (e) {

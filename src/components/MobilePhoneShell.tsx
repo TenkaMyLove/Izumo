@@ -5,8 +5,6 @@ import {
   Film, 
   BarChart3, 
   Settings, 
-  Wifi, 
-  Battery, 
   Plus, 
   Smartphone,
   ExternalLink,
@@ -17,7 +15,6 @@ import {
   Edit3,
   Trash2,
   Repeat,
-  Signal,
   RefreshCw,
   Check,
   Sparkles,
@@ -61,31 +58,19 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
   onAddNew,
   onUpdateSettings,
   onTestSound,
-  onResetDemoData,
-  onSimulateRollover,
   overdueCount,
   simulatedDate,
   isSyncing,
 }) => {
   const todayStr = getTodayDateString(simulatedDate);
-  const currentTimeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const isDark = Boolean(settings.darkMode);
 
   return (
-    <div className="w-full max-w-md md:max-w-[380px] mx-auto bg-[#faf1ec] text-[#121214] sm:rounded-[44px] p-3 sm:shadow-2xl shadow-black/40 sm:border-[3px] border-[#121214] sm:ring-4 ring-[#382c38]/20 flex flex-col relative min-h-screen sm:min-h-[740px]">
+    <div className={`w-full max-w-md md:max-w-[380px] mx-auto sm:rounded-[44px] p-3 sm:shadow-2xl shadow-black/40 sm:border-[3px] border-[#121214] sm:ring-4 ring-[#382c38]/20 flex flex-col relative min-h-screen sm:min-h-[740px] transition-colors duration-300 ${isDark ? 'bg-[#121214] text-[#faf1ec]' : 'bg-[#faf1ec] text-[#121214]'}`}>
       {/* Dynamic Island (hidden on real mobile screens) */}
       <div className="hidden sm:flex w-28 h-[18px] bg-[#121214] rounded-full mx-auto mb-2 items-center justify-center gap-2 z-20 border border-[#382c38]/30">
         <span className="w-2.5 h-2.5 rounded-full bg-[#382c38]" />
         <span className={`w-2 h-2 rounded-full transition-colors duration-500 ${isSyncing ? 'bg-[#efcc59] animate-pulse' : 'bg-[#382c38]/60'}`} />
-      </div>
-
-      {/* Mobile Top Status Bar */}
-      <div className="px-5 py-1 flex items-center justify-between text-[11px] font-bold text-[#8f7c60]">
-        <span className="font-mono">{currentTimeStr}</span>
-        <div className="flex items-center gap-1.5">
-          <Signal className="w-3 h-3 text-[#8f7c60]" />
-          <Wifi className="w-3.5 h-3.5 text-[#8f7c60]" />
-          <Battery className="w-4 h-4 text-[#8f7c60]" />
-        </div>
       </div>
 
       {/* App Mobile Header */}
@@ -124,6 +109,7 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
           <MobileMainList
             items={items}
             todayStr={todayStr}
+            isDark={isDark}
             onToggleDone={onToggleDone}
             onToggleWatched={onToggleWatched}
             onEditItem={onEditItem}
@@ -136,6 +122,7 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
           <MobileAnimeList
             items={items}
             todayStr={todayStr}
+            isDark={isDark}
             onToggleWatched={onToggleWatched}
             onEditItem={onEditItem}
             onOpenLink={onOpenLink}
@@ -146,6 +133,7 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
           <MobileStatusBreakdown
             items={items}
             todayStr={todayStr}
+            isDark={isDark}
             onToggleDone={onToggleDone}
             onEditItem={onEditItem}
             onOpenLink={onOpenLink}
@@ -157,8 +145,6 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
             settings={settings}
             onUpdateSettings={onUpdateSettings}
             onTestSound={onTestSound}
-            onResetDemoData={onResetDemoData}
-            onSimulateRollover={onSimulateRollover}
           />
         )}
       </div>
@@ -196,12 +182,13 @@ export const MobilePhoneShell: React.FC<MobilePhoneShellProps> = ({
 const MobileMainList: React.FC<{
   items: AgendaItem[];
   todayStr: string;
+  isDark: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onDeleteItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
-}> = ({ items, todayStr, onToggleDone, onToggleWatched, onEditItem, onDeleteItem, onOpenLink }) => {
+}> = ({ items, todayStr, isDark, onToggleDone, onToggleWatched, onEditItem, onDeleteItem, onOpenLink }) => {
   const activeItems = items.filter((i) => i && !i.isDone);
   const sorted = [...activeItems].sort((a, b) => {
     const statusA = getItemStatus(a, todayStr);
@@ -222,17 +209,21 @@ const MobileMainList: React.FC<{
         const friendlyDate = formatFriendlyDate(item.dueDate, todayStr);
         const isAnimeOrManhwa = item.category === 'Anime' || item.category === 'Manhwa';
 
+        const cardStyle = isDark
+          ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
+          : 'bg-white border-[#382c38]/15 text-[#121214]';
+
         return (
           <div
             key={item.id}
             className={`p-3 rounded-2xl border transition-all duration-200 ${
               item.isDone
-                ? 'bg-[#f8f5ef] border-[#382c38]/12 opacity-60'
+                ? 'bg-[#f8f5ef]/10 border-[#382c38]/12 opacity-60'
                 : status === 'Overdue'
-                ? 'bg-[#f1f5b1] border-l-2 border-l-[#851f22] border-[#382c38]/25 text-[#121214]'
+                ? 'bg-[#f1f5b1] border-l-4 border-l-[#851f22] border-[#382c38]/25 text-[#121214]'
                 : status === 'Due Today'
-                ? 'bg-[#f1f5b1] border-l-2 border-l-[#efcc59] border-[#382c38]/25 text-[#121214]'
-                : 'bg-white border-[#382c38]/15'
+                ? 'bg-[#f1f5b1] border-l-4 border-l-[#efcc59] border-[#382c38]/25 text-[#121214]'
+                : cardStyle
             }`}
           >
             <div className="flex items-start justify-between gap-2">
@@ -249,7 +240,7 @@ const MobileMainList: React.FC<{
                 </button>
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5">
-                    <h4 className={`text-xs font-bold leading-snug ${item.isDone ? 'line-through text-[#8f7c60]' : 'text-[#121214]'}`}>
+                    <h4 className={`text-xs font-bold leading-snug ${item.isDone ? 'line-through text-[#8f7c60]' : (status === 'Overdue' || status === 'Due Today') ? 'text-[#121214]' : (isDark ? 'text-[#faf1ec]' : 'text-[#121214]')}`}>
                       {item.title}
                     </h4>
                     {item.recurrence && item.recurrence !== 'none' && (
@@ -259,7 +250,7 @@ const MobileMainList: React.FC<{
                     )}
                   </div>
                   <div className="flex items-center gap-1.5 mt-0.5">
-                    <span className="text-[10px] text-[#8f7c60] font-semibold">{item.category}</span>
+                    <span className={`text-[10px] font-semibold ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>{item.category}</span>
                     {status === 'Overdue' && !item.isDone && (
                       <span className="text-[9px] bg-[#851f22] text-[#faf1ec] px-1.5 py-0.5 rounded font-bold">OVERDUE</span>
                     )}
@@ -270,13 +261,13 @@ const MobileMainList: React.FC<{
                 </div>
               </div>
 
-              <span className="text-[10px] font-mono text-[#8f7c60] whitespace-nowrap font-bold shrink-0">
+              <span className={`text-[10px] font-mono whitespace-nowrap font-bold shrink-0 ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>
                 {friendlyDate}
               </span>
             </div>
 
             {item.notes && (
-              <p className="text-[10px] text-[#8f7c60] line-clamp-1 pl-6 mt-1 font-medium">{item.notes}</p>
+              <p className={`text-[10px] line-clamp-1 pl-6 mt-1 font-medium ${(status === 'Overdue' || status === 'Due Today') ? 'text-[#382c38]' : (isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]')}`}>{item.notes}</p>
             )}
 
             <div className="flex items-center justify-between pt-2 mt-1 border-t border-[#382c38]/10">
@@ -307,13 +298,13 @@ const MobileMainList: React.FC<{
                 )}
                 <button
                   onClick={() => onEditItem(item)}
-                  className="p-1.5 bg-[#f8f5ef] text-[#121214] border border-[#382c38]/25 rounded-lg transition-all duration-150 hover:scale-110"
+                  className="p-1.5 bg-[#f8f5ef]/20 text-[#faf1ec] border border-[#382c38]/25 rounded-lg transition-all duration-150 hover:scale-110"
                 >
                   <Edit3 className="w-3 h-3" />
                 </button>
                 <button
                   onClick={() => onDeleteItem(item)}
-                  className="p-1.5 bg-[#851f22]/8 text-[#851f22] border border-[#851f22]/25 rounded-lg transition-all duration-150 hover:scale-110 hover:bg-[#851f22] hover:text-[#faf1ec]"
+                  className="p-1.5 bg-[#851f22]/15 text-[#851f22] border border-[#851f22]/25 rounded-lg transition-all duration-150 hover:scale-110 hover:bg-[#851f22] hover:text-[#faf1ec]"
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -330,37 +321,41 @@ const MobileMainList: React.FC<{
 const MobileAnimeList: React.FC<{
   items: AgendaItem[];
   todayStr: string;
+  isDark: boolean;
   onToggleWatched: (id: string, currentWatched: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
-}> = ({ items, todayStr, onToggleWatched, onEditItem, onOpenLink }) => {
+}> = ({ items, todayStr, isDark, onToggleWatched, onEditItem, onOpenLink }) => {
   const animeManhwa = items.filter((i) => i?.category === 'Anime' || i?.category === 'Manhwa');
   const watched = animeManhwa.filter((i) => i.isWatched).length;
   const pct = animeManhwa.length > 0 ? Math.round((watched / animeManhwa.length) * 100) : 0;
 
+  const cardStyle = isDark
+    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#382c38]/15 text-[#121214]';
+
   return (
     <div className="space-y-3 px-1">
-      {/* Mini progress */}
       {animeManhwa.length > 0 && (
-        <div className="p-2.5 bg-white border border-[#382c38]/15 rounded-xl">
-          <div className="flex items-center justify-between text-[10px] font-bold text-[#121214] mb-1.5">
+        <div className={`p-2.5 border rounded-xl ${cardStyle}`}>
+          <div className="flex items-center justify-between text-[10px] font-bold mb-1.5">
             <span>Anime & Manhwa</span>
             <span className="font-mono text-[#8f7c60]">{watched}/{animeManhwa.length} watched</span>
           </div>
-          <div className="h-1 bg-[#f8f5ef] rounded-full overflow-hidden">
+          <div className="h-1 bg-[#f8f5ef]/20 rounded-full overflow-hidden">
             <div className="h-full bg-[#386641] rounded-full transition-all duration-700" style={{ width: `${pct}%` }} />
           </div>
         </div>
       )}
 
       {animeManhwa.map((item) => (
-        <div key={item.id} className="p-3 bg-white border border-[#382c38]/15 rounded-2xl space-y-2">
+        <div key={item.id} className={`p-3 border rounded-2xl space-y-2 ${cardStyle}`}>
           <div className="flex items-start justify-between gap-2">
             <div>
-              <h4 className="text-xs font-bold text-[#121214]">{item.title}</h4>
-              <div className="flex items-center gap-1.5 mt-1">
-                <span className="text-[10px] text-[#8f7c60] font-semibold">{item.category}</span>
-                <span className="text-[10px] text-[#8f7c60]">• {formatFriendlyDate(item.dueDate, todayStr)}</span>
+              <h4 className="text-xs font-bold">{item.title}</h4>
+              <div className="flex items-center gap-1.5 mt-1 text-[10px] text-[#8f7c60]">
+                <span className="font-semibold">{item.category}</span>
+                <span>• {formatFriendlyDate(item.dueDate, todayStr)}</span>
               </div>
             </div>
             <button
@@ -385,38 +380,43 @@ const MobileAnimeList: React.FC<{
 const MobileStatusBreakdown: React.FC<{
   items: AgendaItem[];
   todayStr: string;
+  isDark: boolean;
   onToggleDone: (id: string, currentDone: boolean) => void;
   onEditItem: (item: AgendaItem) => void;
   onOpenLink: (url: string, title: string) => void;
-}> = ({ items, todayStr, onToggleDone, onEditItem, onOpenLink }) => {
+}> = ({ items, todayStr, isDark, onToggleDone, onEditItem, onOpenLink }) => {
   const validItems = items.filter(Boolean);
   const overdue = validItems.filter((i) => !i.isDone && getItemStatus(i, todayStr) === 'Overdue');
   const dueToday = validItems.filter((i) => !i.isDone && getItemStatus(i, todayStr) === 'Due Today');
   const upcoming = validItems.filter((i) => !i.isDone && getItemStatus(i, todayStr) === 'Upcoming');
 
+  const cardStyle = isDark
+    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#382c38]/15 text-[#121214]';
+
   const groups = [
     { title: '🚨 Overdue', list: overdue, badge: 'bg-[#851f22] text-white' },
     { title: '⭐ Due Today', list: dueToday, badge: 'bg-[#efcc59] text-[#121214]' },
-    { title: '📅 Upcoming', list: upcoming, badge: 'bg-[#faf1ec] text-[#121214] border border-[#382c38]/20' },
+    { title: '📅 Upcoming', list: upcoming, badge: 'bg-[#faf1ec]/20 text-current border border-[#382c38]/20' },
   ];
 
   return (
     <div className="space-y-3 px-1">
       {groups.map(({ title, list, badge }) => (
-        <div key={title} className="p-3 bg-white border border-[#382c38]/15 rounded-2xl space-y-2">
+        <div key={title} className={`p-3 border rounded-2xl space-y-2 ${cardStyle}`}>
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-[#121214]">{title}</span>
+            <span className="text-xs font-bold">{title}</span>
             <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${badge}`}>
               {list.length}
             </span>
           </div>
 
           {list.map((item) => (
-            <div key={item.id} className="p-2.5 bg-[#faf1ec]/60 rounded-xl flex items-center justify-between text-xs border border-[#382c38]/10">
-              <span className="font-bold text-[#121214] truncate pr-2">{item.title}</span>
+            <div key={item.id} className="p-2.5 bg-[#faf1ec]/10 rounded-xl flex items-center justify-between text-xs border border-[#382c38]/15">
+              <span className="font-bold truncate pr-2">{item.title}</span>
               <button
                 onClick={() => onToggleDone(item.id, item.isDone)}
-                className="text-[10px] font-bold px-2 py-1 bg-[#121214] text-[#faf1ec] rounded-lg shrink-0"
+                className="text-[10px] font-bold px-2 py-1 bg-[#121214] text-[#faf1ec] rounded-lg shrink-0 border border-[#382c38]"
               >
                 Mark Done
               </button>
@@ -433,9 +433,7 @@ const MobileSettings: React.FC<{
   settings: AppSettings;
   onUpdateSettings: (newSettings: Partial<AppSettings>) => void;
   onTestSound?: () => void;
-  onResetDemoData?: () => void;
-  onSimulateRollover?: () => void;
-}> = ({ settings, onUpdateSettings, onTestSound, onResetDemoData, onSimulateRollover }) => {
+}> = ({ settings, onUpdateSettings, onTestSound }) => {
   const [copiedCode, setCopiedCode] = React.useState(false);
   const [inputCode, setInputCode] = React.useState(settings.syncCode || '');
 
@@ -473,12 +471,17 @@ const MobileSettings: React.FC<{
     }
   };
 
+  const isDark = Boolean(settings.darkMode);
+  const cardStyle = isDark
+    ? 'bg-[#1e1a1e] border-[#382c38] text-[#faf1ec]'
+    : 'bg-white border-[#382c38]/15 text-[#121214]';
+
   return (
     <div className="px-1 space-y-3 pb-4">
       {/* Sync Code Pairing Box */}
-      <div className="p-4 bg-white border border-[#382c38]/15 rounded-2xl space-y-3 text-xs shadow-xs">
+      <div className={`p-4 border rounded-2xl space-y-3 text-xs shadow-xs ${cardStyle}`}>
         <div className="flex items-center justify-between">
-          <div className="font-bold text-[#121214] flex items-center gap-2">
+          <div className="font-bold flex items-center gap-2">
             <div className="w-7 h-7 bg-[#f1f5b1] rounded-xl flex items-center justify-center border border-[#382c38]/15">
               <Smartphone className="w-4 h-4 text-[#121214]" />
             </div>
@@ -489,7 +492,7 @@ const MobileSettings: React.FC<{
           </span>
         </div>
 
-        <p className="text-[11px] text-[#8f7c60] font-medium">
+        <p className={`text-[11px] font-medium ${isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]'}`}>
           Enter or edit your secret pair code to sync with Desktop:
         </p>
 
@@ -498,14 +501,14 @@ const MobileSettings: React.FC<{
             type="text"
             value={inputCode}
             onChange={handleInputChange}
-            placeholder="AG-9842"
+            placeholder="XX-1234"
             className="w-full p-2.5 bg-[#121214] text-[#f1f5b1] font-mono font-black text-center rounded-xl text-lg border border-[#382c38]/40 tracking-widest uppercase focus:outline-none focus:ring-2 focus:ring-[#efcc59]"
           />
 
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={handleCopyCode}
-              className="flex-1 py-2 bg-[#f8f5ef] hover:bg-[#faf1ec] text-[#121214] border border-[#382c38]/20 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
+              className="flex-1 py-2 bg-[#f8f5ef]/10 hover:bg-[#faf1ec]/20 border border-[#382c38]/30 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
             >
               {copiedCode ? <Check className="w-3.5 h-3.5 text-[#386641]" /> : <RefreshCw className="w-3.5 h-3.5 text-[#8f7c60]" />}
               <span>{copiedCode ? 'Copied!' : 'Copy Code'}</span>
@@ -516,9 +519,9 @@ const MobileSettings: React.FC<{
                 const newCode = `IZ-${Math.floor(1000 + Math.random() * 9000)}`;
                 onUpdateSettings({ syncCode: newCode });
               }}
-              className="flex-1 py-2 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-[#121214] border border-[#efcc59]/50 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
+              className="flex-1 py-2 bg-[#efcc59]/20 hover:bg-[#efcc59]/30 text-current border border-[#efcc59]/50 rounded-xl font-bold text-xs flex items-center justify-center gap-1 transition"
             >
-              <Sparkles className="w-3.5 h-3.5 text-[#121214]" />
+              <Sparkles className="w-3.5 h-3.5" />
               <span>New Code</span>
             </button>
           </div>
@@ -526,45 +529,45 @@ const MobileSettings: React.FC<{
       </div>
 
       {/* Appearance Theme */}
-      <div className="p-4 bg-white border border-[#382c38]/15 rounded-2xl space-y-2.5 text-xs shadow-xs">
+      <div className={`p-4 border rounded-2xl space-y-2.5 text-xs shadow-xs ${cardStyle}`}>
         <div className="flex items-center justify-between">
-          <div className="font-bold text-[#121214] flex items-center gap-2">
+          <div className="font-bold flex items-center gap-2">
             <Moon className="w-4 h-4 text-[#8f7c60]" />
             <span>Theme Mode</span>
           </div>
           <button
             onClick={() => onUpdateSettings({ darkMode: !settings.darkMode })}
             className={`w-10 h-5 rounded-full relative transition-colors ${
-              settings.darkMode ? 'bg-[#121214]' : 'bg-[#beb5a0]'
+              settings.darkMode ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
             }`}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#f1f5b1] transition-transform ${
+              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#121214] transition-transform ${
                 settings.darkMode ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
           </button>
         </div>
-        <p className="text-[10px] text-[#8f7c60]">
+        <p className={`text-[10px] ${isDark ? 'text-[#beb5a0]' : 'text-[#8f7c60]'}`}>
           {settings.darkMode ? 'Dark Mode Active (#121214)' : 'Light Mode Active (#faf1ec)'}
         </p>
       </div>
 
       {/* Startup Sound Cue */}
-      <div className="p-4 bg-white border border-[#382c38]/15 rounded-2xl space-y-2.5 text-xs shadow-xs">
+      <div className={`p-4 border rounded-2xl space-y-2.5 text-xs shadow-xs ${cardStyle}`}>
         <div className="flex items-center justify-between">
-          <div className="font-bold text-[#121214] flex items-center gap-2">
+          <div className="font-bold flex items-center gap-2">
             <Volume2 className="w-4 h-4 text-[#8f7c60]" />
             <span>Startup Sound Cue</span>
           </div>
           <button
             onClick={() => onUpdateSettings({ startupSoundEnabled: !settings.startupSoundEnabled })}
             className={`w-10 h-5 rounded-full relative transition-colors ${
-              settings.startupSoundEnabled ? 'bg-[#121214]' : 'bg-[#beb5a0]'
+              settings.startupSoundEnabled ? 'bg-[#efcc59]' : 'bg-[#beb5a0]'
             }`}
           >
             <span
-              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#f1f5b1] transition-transform ${
+              className={`absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-[#121214] transition-transform ${
                 settings.startupSoundEnabled ? 'translate-x-5' : 'translate-x-0'
               }`}
             />
@@ -575,13 +578,13 @@ const MobileSettings: React.FC<{
           <div className="flex items-center gap-2 pt-1">
             <button
               onClick={onTestSound}
-              className="px-3 py-1.5 bg-[#121214] text-[#faf1ec] rounded-xl font-bold text-[10px] flex items-center gap-1"
+              className="px-3 py-1.5 bg-[#121214] text-[#faf1ec] rounded-xl font-bold text-[10px] flex items-center gap-1 border border-[#382c38]"
             >
               <Play className="w-3 h-3 text-[#f1f5b1]" />
               <span>Test Audio</span>
             </button>
 
-            <label className="px-3 py-1.5 bg-[#f8f5ef] text-[#121214] border border-[#382c38]/20 rounded-xl font-bold text-[10px] flex items-center gap-1 cursor-pointer">
+            <label className="px-3 py-1.5 bg-[#f8f5ef]/10 text-current border border-[#382c38]/20 rounded-xl font-bold text-[10px] flex items-center gap-1 cursor-pointer">
               <Upload className="w-3 h-3 text-[#8f7c60]" />
               <span>Upload Custom</span>
               <input
@@ -593,30 +596,6 @@ const MobileSettings: React.FC<{
             </label>
           </div>
         )}
-      </div>
-
-      {/* Simulation & Reset Data */}
-      <div className="p-3 bg-white border border-[#382c38]/15 rounded-2xl text-[10px] space-y-2 shadow-xs">
-        <div className="font-bold text-[#121214] text-xs">Actions & Rollover</div>
-        <div className="flex items-center justify-between gap-2 pt-1">
-          {onSimulateRollover && (
-            <button
-              onClick={onSimulateRollover}
-              className="px-2.5 py-1.5 bg-[#efcc59]/20 text-[#121214] border border-[#efcc59]/40 rounded-xl font-bold text-[10px]"
-            >
-              Simulate Rollover
-            </button>
-          )}
-
-          {onResetDemoData && (
-            <button
-              onClick={onResetDemoData}
-              className="px-2.5 py-1.5 bg-[#851f22]/10 text-[#851f22] border border-[#851f22]/30 rounded-xl font-bold text-[10px]"
-            >
-              Reset Data
-            </button>
-          )}
-        </div>
       </div>
     </div>
   );

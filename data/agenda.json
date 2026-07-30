@@ -215,7 +215,7 @@
     "startupSoundEnabled": true,
     "customSoundName": "Windows 11 Startup Chime",
     "autoStartWindows": true,
-    "syncCode": "AG-9842",
+    "syncCode": "XX-1234",
     "lastSyncTime": "13.37",
     "simulatedCurrentDate": "2026-07-30",
     "darkMode": false
