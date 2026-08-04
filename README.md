@@ -27,8 +27,8 @@
 - **⚡ Automated Day Rollover**: Automatic cleanup of completed items from previous days, with custom date simulation for testing recurring tasks.
 - **🔊 Custom Audio Cues**: Integrated Web Audio API sound engine with volume gain control and custom sound effects (`Tenka.mp3`).
 - **🖥️ Desktop & Mobile View Modes**: Supports full-width desktop mode as well as responsive mobile shell views.
-- **💻 Native Windows App**: Packaged with Electron and bundled with one-click background launchers (`Izumo.vbs`, `Izumo.bat`).
-- **💾 Persistent REST Backend**: Express server persisting agenda state in `data/agenda.json` with REST API endpoints for seamless device synchronization.
+- **💻 Native Windows App**: Packaged with Electron, tray minimize support, and safe user data path handling.
+- **💾 Persistent REST Backend**: Express server persisting agenda state in `%APPDATA%/Izumo/data/agenda.json` (or local `data/agenda.json` during dev) with REST API endpoints for seamless device synchronization.
 
 ---
 
@@ -120,6 +120,10 @@ npm run build:exe
 Output files will be generated in the `release/` directory:
 - `release/win-unpacked/Izumo.exe` (Portable Desktop App)
 - `release/Izumo Setup 0.0.0.exe` (Windows NSIS Installer)
+
+### Windows Startup & Data Storage:
+- **User Data Storage**: Application state is stored in user profile space (`%APPDATA%\Izumo\data\agenda.json` on Windows) to prevent system directory (`system32`) permission issues during automatic startup or system reboots.
+- **Auto-Launch Scoping**: Automatic startup at Windows login (`openAtLogin`) is safely scoped to installed production builds (`app.isPackaged`).
 
 ---
 
