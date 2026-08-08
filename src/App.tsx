@@ -104,6 +104,44 @@ export default function App() {
     };
   }, [settings.syncCode]);
 
+  /** Timestamp-aware merge: the item with the newer updatedAt wins.
+   *  Items only in local are pushed; items only on server are kept; conflicts go to the newer version. */
+  const mergeItems = useCallback((serverItems: AgendaItem[], localItems: AgendaItem[]): {
+    merged: AgendaItem[];
+    toPost: AgendaItem[];
+    toPut: AgendaItem[];
+  } => {
+    const serverMap = new Map(serverItems.map((i) => [i.id, i]));
+    const localMap = new Map(localItems.filter((i) => Boolean(i?.id)).map((i) => [i.id, i]));
+    const merged: AgendaItem[] = [];
+    const toPost: AgendaItem[] = [];
+    const toPut: AgendaItem[] = [];
+
+    const allIds = new Set([...serverMap.keys(), ...localMap.keys()]);
+    for (const id of allIds) {
+      const serverItem = serverMap.get(id);
+      const localItem = localMap.get(id);
+      if (serverItem && !localItem) {
+        merged.push(serverItem);
+      } else if (!serverItem && localItem) {
+        merged.push(localItem);
+        toPost.push(localItem);
+      } else if (serverItem && localItem) {
+        const serverTs = new Date(serverItem.updatedAt || 0).getTime();
+        const localTs = new Date(localItem.updatedAt || 0).getTime();
+        if (localTs > serverTs) {
+          merged.push(localItem);
+          toPut.push(localItem);
+        } else {
+          merged.push(serverItem);
+        }
+      }
+    }
+    // Preserve server ordering roughly (newest first)
+    merged.sort((a, b) => new Date(b.updatedAt || b.createdAt || 0).getTime() - new Date(a.updatedAt || a.createdAt || 0).getTime());
+    return { merged, toPost, toPut };
+  }, []);
+
   // Fetch data from server
   const fetchData = useCallback(async () => {
     try {
@@ -114,7 +152,7 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
-        let cleanItems = rawItems.filter(
+        const serverItems = rawItems.filter(
           (i: any): i is AgendaItem => Boolean(i && typeof i === 'object' && i.id && i.category)
         );
 
@@ -123,34 +161,51 @@ export default function App() {
           settings.syncCode ||
           'XX-1234';
 
-        // Check if local backup has user items that server is missing (e.g. after Vercel cold start)
+        // Load local backup for merge
         let localBackupItems: AgendaItem[] = [];
         try {
           const cached = localStorage.getItem('izumo_auto_backup_items');
-          if (cached) {
-            localBackupItems = JSON.parse(cached);
-          }
-        } catch (e) {}
+          if (cached) localBackupItems = JSON.parse(cached).filter((i: any) => Boolean(i?.id && i?.category));
+        } catch (_) {}
 
-        const serverItemIds = new Set(cleanItems.map((i) => i.id));
-        const missingOnServer = localBackupItems.filter(
-          (i) => Boolean(i && i.id && !serverItemIds.has(i.id))
-        );
+        const isColdStart = data.coldStart || serverItems.length === 0;
 
-        if (missingOnServer.length > 0) {
-          for (const item of missingOnServer) {
-            try {
-              await fetch('/api/items', {
+        let finalItems: AgendaItem[];
+
+        if (localBackupItems.length > 0) {
+          // Always merge using timestamps so the newer edit wins regardless of source
+          const { merged, toPost, toPut } = mergeItems(serverItems, localBackupItems);
+          finalItems = merged;
+
+          if (isColdStart && localBackupItems.length > 0) {
+            // Cold start: push entire local backup atomically via push-state (single request)
+            fetch('/api/push-state', {
+              method: 'POST',
+              headers: getApiHeaders(currentCode),
+              body: JSON.stringify({ items: localBackupItems }),
+            }).catch(() => {});
+          } else {
+            // Warm: push only items that are newer locally (non-blocking)
+            for (const item of toPost) {
+              fetch('/api/items', {
                 method: 'POST',
                 headers: getApiHeaders(currentCode),
                 body: JSON.stringify(item),
-              });
-            } catch (err) {}
+              }).catch(() => {});
+            }
+            for (const item of toPut) {
+              fetch(`/api/items/${item.id}`, {
+                method: 'PUT',
+                headers: getApiHeaders(currentCode),
+                body: JSON.stringify(item),
+              }).catch(() => {});
+            }
           }
-          cleanItems = [...missingOnServer, ...cleanItems];
+        } else {
+          finalItems = serverItems;
         }
 
-        setItems(cleanItems);
+        setItems(finalItems);
 
         const savedDarkMode = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_dark_mode') : null;
         const savedSound = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sound_enabled') : null;
@@ -162,20 +217,20 @@ export default function App() {
           syncCode: currentCode,
         }));
 
-        // Auto-backup to localStorage in case Vercel is unreachable
+        // Save merged state as local backup
         try {
-          localStorage.setItem('izumo_auto_backup_items', JSON.stringify(cleanItems));
+          localStorage.setItem('izumo_auto_backup_items', JSON.stringify(finalItems));
           localStorage.setItem(
             'izumo_auto_backup_settings',
             JSON.stringify({ ...(data.settings || {}), syncCode: currentCode })
           );
           localStorage.setItem('izumo_sync_code', currentCode);
-        } catch (e) {}
+        } catch (_) {}
 
-        // If running in Electron desktop app, backup directly to local disk e:\Izumo\data\agenda.json
+        // Electron: backup to disk
         if (typeof window !== 'undefined' && (window as any).electronAPI?.saveLocalBackup) {
           (window as any).electronAPI.saveLocalBackup({
-            items: cleanItems,
+            items: finalItems,
             settings: { ...(data.settings || {}), syncCode: currentCode },
           });
         }
@@ -187,11 +242,11 @@ export default function App() {
         const cachedSettings = localStorage.getItem('izumo_auto_backup_settings');
         if (cachedItems) setItems(JSON.parse(cachedItems));
         if (cachedSettings) setSettings(JSON.parse(cachedSettings));
-      } catch (err) {}
+      } catch (_) {}
     } finally {
       setIsSyncing(false);
     }
-  }, [getApiHeaders, settings.syncCode]);
+  }, [getApiHeaders, mergeItems, settings.syncCode]);
 
   // Initial load & Polling for live sync between Desktop & Mobile
   useEffect(() => {

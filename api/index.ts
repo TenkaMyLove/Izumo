@@ -4,6 +4,33 @@ import path from 'path';
 // Memory store dictionary per syncCode (multi-tenant room isolation)
 const storesByCode: Record<string, { items: any[]; settings: any }> = {};
 
+// /tmp is writable on Vercel serverless — persists across WARM invocations within the same container
+const TMP_DIR = '/tmp/izumo-data';
+
+function getTmpPath(syncCode: string): string {
+  const safe = syncCode.replace(/[^a-z0-9]/gi, '_').toUpperCase();
+  return path.join(TMP_DIR, `${safe}.json`);
+}
+
+function persistToTmp(syncCode: string, store: { items: any[]; settings: any }): void {
+  try {
+    if (!fs.existsSync(TMP_DIR)) fs.mkdirSync(TMP_DIR, { recursive: true });
+    fs.writeFileSync(getTmpPath(syncCode), JSON.stringify({ ...store, updatedAt: new Date().toISOString() }), 'utf-8');
+  } catch (_) {
+    // /tmp write failure is non-fatal
+  }
+}
+
+function loadFromTmp(syncCode: string): { items: any[]; settings: any } | null {
+  try {
+    const p = getTmpPath(syncCode);
+    if (fs.existsSync(p)) {
+      return JSON.parse(fs.readFileSync(p, 'utf-8'));
+    }
+  } catch (_) {}
+  return null;
+}
+
 function extractSyncCode(req: any): string {
   const headerCode = req.headers?.['x-sync-code'] || req.headers?.['x-sync-id'];
   const queryCode = req.query?.code || req.query?.syncCode;
@@ -14,21 +41,32 @@ function extractSyncCode(req: any): string {
 function getStoreForCode(syncCode: string) {
   const normalized = (syncCode || 'XX-1234').toString().trim().toUpperCase();
   if (!storesByCode[normalized]) {
-    const filePath = path.join(process.cwd(), 'data', 'agenda.json');
-    if (normalized === 'XX-1234' && fs.existsSync(filePath)) {
-      try {
-        const content = fs.readFileSync(filePath, 'utf-8');
-        const parsed = JSON.parse(content);
-        storesByCode[normalized] = {
-          items: parsed.items || [],
-          settings: { ...(parsed.settings || {}), syncCode: 'XX-1234' },
-        };
-        return storesByCode[normalized];
-      } catch (e) {
-        console.error('Error reading agenda.json:', e);
+    // 1. Try /tmp first — survives warm restarts within the same Vercel container
+    const tmpData = loadFromTmp(normalized);
+    if (tmpData && Array.isArray(tmpData.items)) {
+      storesByCode[normalized] = { items: tmpData.items, settings: tmpData.settings || {} };
+      return storesByCode[normalized];
+    }
+
+    // 2. For default code only: try committed data/agenda.json fallback
+    if (normalized === 'XX-1234') {
+      const filePath = path.join(process.cwd(), 'data', 'agenda.json');
+      if (fs.existsSync(filePath)) {
+        try {
+          const content = fs.readFileSync(filePath, 'utf-8');
+          const parsed = JSON.parse(content);
+          storesByCode[normalized] = {
+            items: parsed.items || [],
+            settings: { ...(parsed.settings || {}), syncCode: 'XX-1234' },
+          };
+          return storesByCode[normalized];
+        } catch (e) {
+          console.error('Error reading agenda.json:', e);
+        }
       }
     }
 
+    // 3. Fresh empty store (custom sync code cold-start)
     storesByCode[normalized] = {
       items: [],
       settings: {
@@ -41,6 +79,25 @@ function getStoreForCode(syncCode: string) {
     };
   }
   return storesByCode[normalized];
+}
+
+/** Timestamp-aware merge: the item with the newer updatedAt wins. */
+function mergeItems(serverItems: any[], incomingItems: any[]): any[] {
+  const merged = new Map<string, any>(serverItems.map((i: any) => [i.id, i]));
+  for (const incoming of incomingItems) {
+    if (!incoming?.id) continue;
+    const existing = merged.get(incoming.id);
+    if (!existing) {
+      merged.set(incoming.id, incoming);
+    } else {
+      const existingTs = new Date(existing.updatedAt || 0).getTime();
+      const incomingTs = new Date(incoming.updatedAt || 0).getTime();
+      if (incomingTs > existingTs) {
+        merged.set(incoming.id, incoming);
+      }
+    }
+  }
+  return Array.from(merged.values());
 }
 
 export default function handler(req: any, res: any) {
@@ -59,12 +116,12 @@ export default function handler(req: any, res: any) {
 
   // GET /api/health
   if (url.includes('/api/health') && method === 'GET') {
-    return res.status(200).json({ status: 'ok', syncCode, time: new Date().toISOString() });
+    return res.status(200).json({ status: 'ok', syncCode, itemCount: data.items.length, time: new Date().toISOString() });
   }
 
   // GET /api/data
   if (url.includes('/api/data') && method === 'GET') {
-    return res.status(200).json({ items: data.items || [], settings: data.settings });
+    return res.status(200).json({ items: data.items || [], settings: data.settings, coldStart: data.items.length === 0 });
   }
 
   // GET /api/items
@@ -72,8 +129,23 @@ export default function handler(req: any, res: any) {
     return res.status(200).json(data.items || []);
   }
 
-  // POST /api/items
-  if (url.includes('/api/items') && method === 'POST') {
+  // POST /api/push-state — Bulk atomic state restore from client (used for cold-start recovery).
+  // Client sends its full local backup; server merges using timestamps so newer edits always win.
+  if (url.includes('/api/push-state') && method === 'POST') {
+    const body = req.body || {};
+    const incomingItems: any[] = Array.isArray(body.items) ? body.items : [];
+    if (incomingItems.length > 0) {
+      data.items = mergeItems(data.items, incomingItems);
+      if (body.settings) {
+        data.settings = { ...data.settings, ...body.settings, syncCode };
+      }
+      persistToTmp(syncCode, data);
+    }
+    return res.status(200).json({ success: true, items: data.items, settings: data.settings });
+  }
+
+  // POST /api/items — Add or upsert (timestamp-aware)
+  if (url.includes('/api/items') && !url.includes('/api/items/') && method === 'POST') {
     const body = req.body || {};
     const newItem = {
       ...body,
@@ -85,10 +157,15 @@ export default function handler(req: any, res: any) {
     data.items = data.items || [];
     const existingIndex = data.items.findIndex((it: any) => it && it.id === newItem.id);
     if (existingIndex !== -1) {
-      data.items[existingIndex] = { ...data.items[existingIndex], ...newItem };
+      const existingTs = new Date(data.items[existingIndex].updatedAt || 0).getTime();
+      const incomingTs = new Date(newItem.updatedAt || 0).getTime();
+      if (incomingTs >= existingTs) {
+        data.items[existingIndex] = { ...data.items[existingIndex], ...newItem };
+      }
     } else {
       data.items.unshift(newItem);
     }
+    persistToTmp(syncCode, data);
     return res.status(200).json({ success: true, item: newItem, settings: data.settings });
   }
 
@@ -108,8 +185,10 @@ export default function handler(req: any, res: any) {
 
     if (!updatedItem && id) {
       updatedItem = { id, ...updated, updatedAt: new Date().toISOString() };
+      data.items.unshift(updatedItem);
     }
 
+    persistToTmp(syncCode, data);
     return res.status(200).json({ success: true, item: updatedItem, settings: data.settings });
   }
 
@@ -117,12 +196,14 @@ export default function handler(req: any, res: any) {
   if (url.includes('/api/items/') && method === 'DELETE') {
     const id = url.split('/api/items/')[1]?.split('?')[0];
     data.items = (data.items || []).filter((it: any) => it.id !== id);
+    persistToTmp(syncCode, data);
     return res.status(200).json({ success: true, id, settings: data.settings });
   }
 
   // POST /api/settings
   if (url.includes('/api/settings') && method === 'POST') {
     data.settings = { ...data.settings, ...(req.body || {}), syncCode };
+    persistToTmp(syncCode, data);
     return res.status(200).json({ success: true, settings: data.settings });
   }
 
@@ -139,13 +220,22 @@ export default function handler(req: any, res: any) {
     if (req.body?.simulatedDate) {
       data.settings.simulatedCurrentDate = req.body.simulatedDate;
     }
+    persistToTmp(syncCode, data);
     return res.status(200).json({ success: true, items: data.items, settings: data.settings, clearedCount });
   }
 
   // POST /api/reset
   if (url.includes('/api/reset') && method === 'POST') {
-    const fresh = getStoreForCode(syncCode);
-    return res.status(200).json({ success: true, items: fresh.items || [], settings: fresh.settings });
+    data.items = [];
+    data.settings = {
+      soundEnabled: true,
+      volume: 0.8,
+      syncCode,
+      simulatedCurrentDate: new Date().toISOString().split('T')[0],
+      customSoundData: null,
+    };
+    persistToTmp(syncCode, data);
+    return res.status(200).json({ success: true, items: [], settings: data.settings });
   }
 
   return res.status(200).json(data);
