@@ -80,10 +80,15 @@ export default function handler(req: any, res: any) {
       id: body.id || `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
       category: body.category || 'Anime',
       createdAt: body.createdAt || new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      updatedAt: body.updatedAt || new Date().toISOString(),
     };
     data.items = data.items || [];
-    data.items.unshift(newItem);
+    const existingIndex = data.items.findIndex((it: any) => it && it.id === newItem.id);
+    if (existingIndex !== -1) {
+      data.items[existingIndex] = { ...data.items[existingIndex], ...newItem };
+    } else {
+      data.items.unshift(newItem);
+    }
     return res.status(200).json({ success: true, item: newItem, settings: data.settings });
   }
 

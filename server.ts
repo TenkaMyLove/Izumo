@@ -125,17 +125,22 @@ async function startServer() {
     res.json({ items: currentItems, settings: currentSettings });
   });
 
-  // Add item
+  // Add or upsert item
   app.post('/api/items', (req, res) => {
     const syncCode = getSyncCodeFromReq(req);
     const store = getStoreForCode(syncCode);
     const newItem: AgendaItem = {
       ...req.body,
       id: req.body.id || `item-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: req.body.createdAt || new Date().toISOString(),
+      updatedAt: req.body.updatedAt || new Date().toISOString(),
     };
-    store.items.unshift(newItem);
+    const existingIndex = store.items.findIndex((it) => it && it.id === newItem.id);
+    if (existingIndex !== -1) {
+      store.items[existingIndex] = { ...store.items[existingIndex], ...newItem };
+    } else {
+      store.items.unshift(newItem);
+    }
     store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
     if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
     res.json({ success: true, item: newItem, settings: store.settings });
@@ -190,30 +195,34 @@ async function startServer() {
 
   // Perform Day Rollover (PRD 4.5)
   app.post('/api/rollover', (req, res) => {
-    const todayStr = req.body.simulatedDate || getTodayDateString(currentSettings.simulatedCurrentDate);
-    const beforeCount = currentItems.length;
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
+    const todayStr = req.body.simulatedDate || getTodayDateString(store.settings.simulatedCurrentDate);
+    const beforeCount = store.items.length;
 
     // Filter out items marked done on days before todayStr
-    currentItems = currentItems.filter((item) => !isDoneItemExpired(item, todayStr));
-    const clearedCount = beforeCount - currentItems.length;
+    store.items = store.items.filter((item) => !isDoneItemExpired(item, todayStr));
+    const clearedCount = beforeCount - store.items.length;
 
     if (req.body.simulatedDate) {
-      currentSettings.simulatedCurrentDate = req.body.simulatedDate;
+      store.settings.simulatedCurrentDate = req.body.simulatedDate;
     }
 
-    currentSettings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    saveStoredData(currentItems, currentSettings);
+    store.settings.lastSyncTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
 
-    res.json({ success: true, clearedCount, items: currentItems, settings: currentSettings });
+    res.json({ success: true, clearedCount, items: store.items, settings: store.settings });
   });
 
   // Reset to Seed
   app.post('/api/reset', (req, res) => {
+    const syncCode = getSyncCodeFromReq(req);
+    const store = getStoreForCode(syncCode);
     const seed = getInitialSeedData();
-    currentItems = seed.items;
-    currentSettings = seed.settings;
-    saveStoredData(currentItems, currentSettings);
-    res.json({ success: true, items: currentItems, settings: currentSettings });
+    store.items = seed.items;
+    store.settings = { ...seed.settings, syncCode };
+    if (syncCode === 'XX-1234') saveStoredData(store.items, store.settings);
+    res.json({ success: true, items: store.items, settings: store.settings });
   });
 
   // Serve static files from dist directory in production / compiled binary mode

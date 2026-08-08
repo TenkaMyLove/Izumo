@@ -31,8 +31,21 @@ const getInitialSyncCode = (): string => {
 };
 
 export default function App() {
-  // Initial state: start empty to avoid flashing stale seed data before server response
-  const [items, setItems] = useState<AgendaItem[]>([]);
+  // Initial state: load cached backup first to prevent flash of stale data
+  const [items, setItems] = useState<AgendaItem[]>(() => {
+    if (typeof window !== 'undefined' && window.localStorage) {
+      try {
+        const cached = localStorage.getItem('izumo_auto_backup_items');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            return parsed.filter((i: any) => Boolean(i && typeof i === 'object' && i.id && i.category));
+          }
+        }
+      } catch (e) {}
+    }
+    return [];
+  });
   const [settings, setSettings] = useState<AppSettings>(() => {
     const seedSettings = getInitialSeedData().settings;
     const initialCode = getInitialSyncCode();
@@ -101,15 +114,43 @@ export default function App() {
       if (res.ok) {
         const data = await res.json();
         const rawItems = Array.isArray(data.items) ? data.items : Array.isArray(data) ? data : [];
-        const cleanItems = rawItems.filter(
+        let cleanItems = rawItems.filter(
           (i: any): i is AgendaItem => Boolean(i && typeof i === 'object' && i.id && i.category)
         );
-        setItems(cleanItems);
 
         const currentCode =
           (typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sync_code') : null) ||
           settings.syncCode ||
           'XX-1234';
+
+        // Check if local backup has user items that server is missing (e.g. after Vercel cold start)
+        let localBackupItems: AgendaItem[] = [];
+        try {
+          const cached = localStorage.getItem('izumo_auto_backup_items');
+          if (cached) {
+            localBackupItems = JSON.parse(cached);
+          }
+        } catch (e) {}
+
+        const serverItemIds = new Set(cleanItems.map((i) => i.id));
+        const missingOnServer = localBackupItems.filter(
+          (i) => Boolean(i && i.id && !serverItemIds.has(i.id))
+        );
+
+        if (missingOnServer.length > 0) {
+          for (const item of missingOnServer) {
+            try {
+              await fetch('/api/items', {
+                method: 'POST',
+                headers: getApiHeaders(currentCode),
+                body: JSON.stringify(item),
+              });
+            } catch (err) {}
+          }
+          cleanItems = [...missingOnServer, ...cleanItems];
+        }
+
+        setItems(cleanItems);
 
         const savedDarkMode = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_dark_mode') : null;
         const savedSound = typeof localStorage !== 'undefined' ? localStorage.getItem('izumo_sound_enabled') : null;
